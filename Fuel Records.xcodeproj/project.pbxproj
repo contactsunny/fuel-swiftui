@@ -181,7 +181,7 @@
 				};
 			};
 			buildConfigurationList = A3C908C32C9D21E900FB9B7F /* Build configuration list for PBXProject "Fuel Records" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
