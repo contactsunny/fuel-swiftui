@@ -12,7 +12,7 @@ struct FuelRecordsView: View {
     @Binding var httpUtil: HttpUtil
     @State var fuelRecords: [Fuel]
     var fuelService = FuelService()
-    @State var showAddFuel: Bool = false
+    @State var showAddFuelSheet: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -20,7 +20,9 @@ struct FuelRecordsView: View {
                 ForEach($fuelRecords) {
                     record in
                     FuelRecordRowView(fuel: record)
-                }
+                }.onDelete(perform: { indexSet in
+                    fuelRecords.remove(atOffsets: indexSet)
+                })
             }.navigationTitle(Text("Fuel Logs"))
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -28,14 +30,23 @@ struct FuelRecordsView: View {
                     }
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("+") {
-                            showAddFuel.toggle()
+                        Button("Add") {
+                            showAddFuelSheet = true
                         }
                     }
                 }
         }
         .task {
             fuelRecords = await fuelService.getFuelRecords()!
+        }.sheet(isPresented: $showAddFuelSheet,
+                onDismiss: {
+            showAddFuelSheet = false
+        }) {
+            NavigationStack {
+                Form {
+                }
+                .navigationTitle("Add Fuel Log")
+            }
         }
     }
 }
