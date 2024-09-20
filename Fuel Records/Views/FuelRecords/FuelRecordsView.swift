@@ -12,17 +12,27 @@ struct FuelRecordsView: View {
     @Binding var httpUtil: HttpUtil
     @State var fuelRecords: [Fuel]
     var fuelService = FuelService()
+    @State var showAddFuel: Bool = false
     
     var body: some View {
         NavigationStack {
             List {
                 ForEach($fuelRecords) {
                     record in
-//                    Section {
-                        FuelRecordRowView(fuel: record)
-//                    }
+                    FuelRecordRowView(fuel: record)
                 }
             }.navigationTitle(Text("Fuel Logs"))
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        EditButton()
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("+") {
+                            showAddFuel.toggle()
+                        }
+                    }
+                }
         }
         .task {
             fuelRecords = await fuelService.getFuelRecords()!

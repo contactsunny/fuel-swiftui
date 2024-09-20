@@ -13,28 +13,32 @@ struct FuelRecordRowView: View {
         let vehicleName = ($fuel.wrappedValue.vehicle != nil) ? $fuel.wrappedValue.vehicle?.name : "Not available"
         
         NavigationLink(destination: FuelRecordDetailsView(fuel: $fuel)) {
-            HStack {
-                HStack{
-                    Image(systemName: "car").padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 5))
-                    Text(vehicleName!)
-                        .lineLimit(2)
-                        .truncationMode(.tail)
-                    Spacer()
-                }.padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                Spacer()
+            Section {
                 VStack {
-                    HStack {
-                        Image(systemName: "calendar").padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 5))
-                        Text("\(CustomUtil.getFormattedDateFromTimestamp(timestamp: $fuel.wrappedValue.date))")
-                        Spacer()
-                    }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
-                    HStack {
-                        Image(systemName: "indianrupeesign").padding(EdgeInsets(top: 0, leading:5, bottom: 0, trailing: 6))
-                        Text("\($fuel.wrappedValue.amount, specifier: "%.2f")")
-                        Spacer()
-                    }.padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    VStack(spacing: 3) {
+                        HStack {
+                            Text(vehicleName!)
+                                .lineLimit(2)
+                                .truncationMode(.tail)
+                                .textScale(.default)
+                                .foregroundColor(.primary)
+                                .font(.headline)
+                            Spacer()
+                        }
+                        HStack {
+                            Text("\(CustomUtil.getFormattedDateFromTimestamp(timestamp: $fuel.wrappedValue.date))")
+                                .foregroundColor(.secondary)
+                                .textScale(.secondary)
+                            Spacer()
+                        }
+                        HStack {
+                            Text("Rs. \($fuel.wrappedValue.amount, specifier: "%.2f")")
+                                .foregroundColor(.secondary)
+                                .textScale(.secondary)
+                            Spacer()
+                        }
+                    }
                 }
-                
             }
         }
     }

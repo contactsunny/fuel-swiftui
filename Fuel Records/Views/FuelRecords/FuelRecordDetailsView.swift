@@ -48,35 +48,31 @@ struct FuelRecordDetailsView: View {
                         Text("\(fuel.fuelType.capitalized)")
                     }
                     HStack {
-                        Text("Volume (L)")
+                        Text("Volume")
                         Spacer()
-                        Text("\(fuel.litres, specifier: "%.2f")")
+                        Text("\(fuel.litres, specifier: "%.2f") L")
                     }
                     HStack {
-                        Text("Cost Per Litre (Rs.)")
+                        Text("Cost Per Litre")
                         Spacer()
-                        Text("\(fuel.costPerLitre, specifier: "%.2f")")
+                        Text("Rs. \(fuel.costPerLitre, specifier: "%.2f")")
                     }
                 }
 //                Payment Info
                 Section(header: Text("Payment Info")) {
+                    
+                    HStack {
+                        Text("Total Paid")
+                        Spacer()
+                        Text("Rs. \(fuel.amount, specifier: "%.2f")")
+                    }
                     HStack {
                         Text("Payment Method")
                         Spacer()
                         Text("\(fuel.paymentType)")
                     }
-                    HStack {
-                        Text("Volume (L)")
-                        Spacer()
-                        Text("\(fuel.litres, specifier: "%.2f")")
-                    }
-                    HStack {
-                        Text("Cost Per Litre (Rs.)")
-                        Spacer()
-                        Text("\(fuel.costPerLitre, specifier: "%.2f")")
-                    }
                 }
-            }.navigationTitle(Text("Fuel Record Details"))
+            }.navigationTitle(Text("Fuel Log"))
         }
     }
 }
