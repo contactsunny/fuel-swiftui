@@ -17,5 +17,5 @@ struct FuelRecordDetailsView: View {
 }
 
 #Preview {
-    FuelRecordDetailsView(fuel: .constant(Fuel(id: "someID", userId: "someId", date: Date().localDate(), vehicleId: "someId", litres: 23.45, amount: 1234.56, costPerLitre: 90.12, fuelType: "PETROL", paymentType: "UPI", vehicleCategoryId: "someId", createdAt: Date().localDate(), updatedAt: Date().localDate())))
+    FuelRecordDetailsView(fuel: .constant(Fuel(id: "someID", userId: "someId", date: 1726819273, vehicleId: "someId", litres: 23.45, amount: 1234.56, costPerLitre: 90.12, fuelType: "PETROL", paymentType: "UPI", vehicleCategoryId: "someId", createdAt: 1726819273, updatedAt: 1726819273)))
 }

@@ -13,7 +13,7 @@ class Fuel: Identifiable, Decodable {
     internal enum CodingKeys: CodingKey {
         case id
         case userId
-//        case _date
+        case date
         case vehicleId
         case litres
         case amount
@@ -21,8 +21,8 @@ class Fuel: Identifiable, Decodable {
         case fuelType
         case paymentType
         case vehicleCategoryId
-////        case _createdAt
-////        case _updatedAt
+        case createdAt
+        case updatedAt
         case _$observationRegistrar
     }
     
@@ -30,7 +30,7 @@ class Fuel: Identifiable, Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
         self.userId = try container.decode(String.self, forKey: .userId)
-//        self._date = try container.decode(Date.self, forKey: ._date)
+        self._date = try container.decode(Double.self, forKey: .date)
         self._vehicleId = try container.decode(String.self, forKey: .vehicleId)
         self._litres = try container.decode(Double.self, forKey: .litres)
         self._amount = try container.decode(Double.self, forKey: .amount)
@@ -38,14 +38,14 @@ class Fuel: Identifiable, Decodable {
         self._fuelType = try container.decode(String.self, forKey: .fuelType)
         self._paymentType = try container.decode(String.self, forKey: .paymentType)
         self._vehicleCategoryId = try container.decode(String.self, forKey: .vehicleCategoryId)
-//        self._createdAt = try container.decode(Date.self, forKey: ._createdAt)
-//        self._updatedAt = try container.decodeIfPresent(Date.self, forKey: ._updatedAt)
+        self._createdAt = try container.decode(Double.self, forKey: .createdAt)
+        self._updatedAt = try container.decodeIfPresent(Double.self, forKey: .updatedAt)
     }
     
-    internal init(id: String, userId: String, date: Date, vehicleId: String, litres: Double, amount: Double, costPerLitre: Double, fuelType: String, paymentType: String, vehicleCategoryId: String, createdAt: Date, updatedAt: Date?) {
+    internal init(id: String, userId: String, date: Double, vehicleId: String, litres: Double, amount: Double, costPerLitre: Double, fuelType: String, paymentType: String, vehicleCategoryId: String, createdAt: Double, updatedAt: Double?) {
         self.id = id
         self.userId = userId
-//        self.date = date
+        self.date = date
         self.vehicleId = vehicleId
         self.litres = litres
         self.amount = amount
@@ -53,13 +53,13 @@ class Fuel: Identifiable, Decodable {
         self.fuelType = fuelType
         self.paymentType = paymentType
         self.vehicleCategoryId = vehicleCategoryId
-//        self.createdAt = createdAt
-//        self.updatedAt = updatedAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
     
     let id: String
     let userId: String
-//    var date:
+    var date: Double
     var vehicleId: String
     var litres: Double
     var amount: Double
@@ -67,8 +67,8 @@ class Fuel: Identifiable, Decodable {
     var fuelType: String
     var paymentType: String
     var vehicleCategoryId: String
-//    var createdAt: Date
-//    var updatedAt: Date?
+    var createdAt: Double
+    var updatedAt: Double?
     var vehicle: Vehicle?
     
     

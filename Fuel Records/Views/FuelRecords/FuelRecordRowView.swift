@@ -20,14 +20,14 @@ struct FuelRecordRowView: View {
                     Text(vehicleName!)
                 }
                 HStack {
+                    Text("Date")
+                    Spacer()
+                    Text("\(CustomUtil.getFormattedDateFromTimestamp(timestamp: $fuel.wrappedValue.date))")
+                }
+                HStack {
                     Text("Amount")
                     Spacer()
                     Text("Rs. \($fuel.wrappedValue.amount, specifier: "%.2f")")
-                }
-                HStack {
-                    Text("Litres")
-                    Spacer()
-                    Text("\($fuel.wrappedValue.litres, specifier: "%.2f")")
                 }
                 
                 //            HStack {
@@ -45,5 +45,5 @@ struct FuelRecordRowView: View {
 }
 
 #Preview {
-    FuelRecordRowView(fuel: .constant(Fuel(id: "someID", userId: "someId", date: Date().localDate(), vehicleId: "someId", litres: 23.45, amount: 1234.56, costPerLitre: 90.12, fuelType: "PETROL", paymentType: "UPI", vehicleCategoryId: "someId", createdAt: Date().localDate(), updatedAt: Date().localDate())))
+    FuelRecordRowView(fuel: .constant(Fuel(id: "someID", userId: "someId", date: 1726819273, vehicleId: "someId", litres: 23.45, amount: 1234.56, costPerLitre: 90.12, fuelType: "PETROL", paymentType: "UPI", vehicleCategoryId: "someId", createdAt: 1726819273, updatedAt: 1726819273)))
 }
