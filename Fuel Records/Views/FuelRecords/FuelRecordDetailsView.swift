@@ -69,7 +69,7 @@ struct FuelRecordDetailsView: View {
                     HStack {
                         Text("Payment Method")
                         Spacer()
-                        Text("\(fuel.paymentType)")
+                        Text("\(CustomUtil.getFormattedString(str: fuel.paymentType))")
                     }
                 }
             }.navigationTitle(Text("Fuel Log"))
@@ -88,7 +88,7 @@ struct FuelRecordDetailsView: View {
             amount: 1234.56,
             costPerLitre: 90.12,
             fuelType: "PETROL",
-            paymentType: "UPI",
+            paymentType: "CREDIT_CARD",
             vehicleCategoryId: "someId",
             createdAt: 1719923258485,
             updatedAt: 1719923258485,

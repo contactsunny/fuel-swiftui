@@ -18,4 +18,36 @@ class CustomUtil {
         let localDate = dateFormatter.string(from: date as Date)
         return localDate
     }
+    
+    static func getFormattedString(str: String) -> String {
+        var formattedStr: String
+        var separator: String = ""
+        var containsSpecialChar: Bool = false
+        
+        if str.contains("_") {
+            separator = "_"
+            containsSpecialChar = true
+        } else if str.contains(" ") {
+            separator = " "
+            containsSpecialChar = true
+        } else if str.contains("-") {
+            separator = "-"
+            containsSpecialChar = true
+        }
+        
+        if containsSpecialChar {
+            let splits = str.split(separator: separator)
+            var words: [String] = []
+            for split in splits {
+                let firstLetter = split.prefix(1).capitalized
+                let remainingLetters = split.dropFirst().lowercased()
+                words.append(firstLetter + remainingLetters)
+            }
+            formattedStr = words.joined(separator: " ")
+        } else {
+            formattedStr = str
+        }
+        
+        return formattedStr
+    }
 }

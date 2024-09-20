@@ -48,4 +48,19 @@ class HttpUtil {
         }
         return nil
     }
+    
+    func makePostCall(endpoint: String, data: Data) async -> Data? {
+        var request = getRequest(endpoint: endpoint)
+        request.httpMethod = "POST"
+        request.httpBody = data
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        do {
+            let result = try await self.session.data(for: request)
+            return result.0
+        } catch let error {
+            logger.error("\(error.localizedDescription)")
+        }
+        return nil
+    }
 }

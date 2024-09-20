@@ -13,7 +13,7 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection:$selection) {
-            FuelRecordsView(httpUtil: $httpUtil, fuelRecords: []).tabItem {
+            FuelRecordsView(fuelRecords: []).tabItem {
                 Image(systemName: "fuelpump")
                 Text("Fuel Logs")
             }.tag(0)

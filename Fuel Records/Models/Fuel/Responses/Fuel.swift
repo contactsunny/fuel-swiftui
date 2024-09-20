@@ -38,13 +38,13 @@ class Fuel: Identifiable, Decodable {
         self._costPerLitre = try container.decode(Double.self, forKey: .costPerLitre)
         self._fuelType = try container.decode(String.self, forKey: .fuelType)
         self._paymentType = try container.decode(String.self, forKey: .paymentType)
-        self._vehicleCategoryId = try container.decode(String.self, forKey: .vehicleCategoryId)
+        self._vehicleCategoryId = try container.decodeIfPresent(String.self, forKey: .vehicleCategoryId)
         self._createdAt = try container.decode(Double.self, forKey: .createdAt)
         self._updatedAt = try container.decodeIfPresent(Double.self, forKey: .updatedAt)
         self.vehicle = try container.decodeIfPresent(Vehicle.self, forKey: .vehicle)
     }
     
-    internal init(id: String, userId: String, date: Double, vehicleId: String, litres: Double, amount: Double, costPerLitre: Double, fuelType: String, paymentType: String, vehicleCategoryId: String, createdAt: Double, updatedAt: Double?, vehicle: Vehicle?) {
+    internal init(id: String, userId: String, date: Double, vehicleId: String, litres: Double, amount: Double, costPerLitre: Double, fuelType: String, paymentType: String, vehicleCategoryId: String?, createdAt: Double, updatedAt: Double?, vehicle: Vehicle?) {
         self.id = id
         self.userId = userId
         self.date = date
@@ -69,7 +69,7 @@ class Fuel: Identifiable, Decodable {
     var costPerLitre: Double
     var fuelType: String
     var paymentType: String
-    var vehicleCategoryId: String
+    var vehicleCategoryId: String?
     var createdAt: Double
     var updatedAt: Double?
     var vehicle: Vehicle?
