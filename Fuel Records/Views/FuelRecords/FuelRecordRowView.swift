@@ -10,16 +10,34 @@ import SwiftUI
 struct FuelRecordRowView: View {
     @Binding var fuel: Fuel
     var body: some View {
-        VStack {
-            HStack {
-                Text("\($fuel.wrappedValue.vehicleId)")
-                Text("Rs. \($fuel.wrappedValue.amount, specifier: "%.2f")")
+        NavigationLink(destination: FuelRecordDetailsView()) {
+            VStack {
+                HStack{
+                    Text("Vehicle")
+                    Spacer()
+                    Text("\($fuel.wrappedValue.vehicleId)")
+                }
+                HStack {
+                    Text("Amount")
+                    Spacer()
+                    Text("Rs. \($fuel.wrappedValue.amount, specifier: "%.2f")")
+                }
+                HStack {
+                    Text("Litres")
+                    Spacer()
+                    Text("\($fuel.wrappedValue.litres)")
+                }
+                
+                //            HStack {
+//                Text("\($fuel.wrappedValue.vehicleId)").frame(maxWidth: .infinity)
+//                Text("Rs. \($fuel.wrappedValue.amount, specifier: "%.2f")").frame(maxWidth: .infinity)
+//                //            }
+//                //            HStack {
+//                Text("\($fuel.wrappedValue.vehicleId)").frame(maxWidth: .infinity)
+//                Text("\($fuel.wrappedValue.amount, specifier: "%.2f")").frame(maxWidth: .infinity)
+                //            }
+                
             }
-            HStack {
-                Text("\($fuel.wrappedValue.vehicleId)")
-                Text("\($fuel.wrappedValue.amount, specifier: "%.2f")")
-            }
-            
         }
     }
 }
