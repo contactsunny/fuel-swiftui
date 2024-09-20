@@ -54,14 +54,15 @@ struct FuelRecordsView: View {
                 NavigationStack {
                     FuelRecordForm(shouldRefreshList: $shouldRefreshList, formType: "add")
                         .navigationTitle("Add Fuel Log")
-                }
-            }
-            .task {
-                if shouldRefreshList {
-                    showProgressView = true
-                    fuelRecords = await fuelService.getFuelRecords()!
-                    showProgressView = false
-                    shouldRefreshList = false
+                }.onDisappear() {
+                    Task {
+                        if shouldRefreshList {
+                            showProgressView = true
+                            fuelRecords = await fuelService.getFuelRecords()!
+                            showProgressView = false
+                            shouldRefreshList = false
+                        }
+                    }
                 }
             }
         }

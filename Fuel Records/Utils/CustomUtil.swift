@@ -50,4 +50,22 @@ class CustomUtil {
         
         return formattedStr
     }
+    
+    static func addOrSubtractMonth(month: Int) -> Date {
+        Calendar.current.date(byAdding: .month, value: month, to: Date())!
+    }
+    
+    static func addOrSubtractDay(day: Int) -> Date {
+        Calendar.current.date(byAdding: .day, value: day, to: Date())!
+    }
+    
+    static func getFormattedDateString(date: Date, startTime: Bool) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd"
+        let dateString = formatter.string(from: date)
+        if startTime {
+            return "\(dateString)000000"
+        }
+        return "\(dateString)235959"
+    }
 }

@@ -28,7 +28,8 @@ struct FuelRecordForm: View {
     @Environment(\.dismiss) private var dismiss
     @State var showErrorAlert: Bool = false
     @State var alertMessage: String?
-    @State var showSuccessAlert: Bool = false
+//    @State var showSuccessAlert: Bool = false
+    @State var shouldDismissSheet: Bool = false
     
     var body: some View {
         if showProgressView {
@@ -94,7 +95,10 @@ struct FuelRecordForm: View {
                     Button("Save") {
                         Task {
                             await saveFuelLog()
-//                            dismiss()
+                            if shouldDismissSheet {
+                                shouldDismissSheet = false
+                                dismiss()
+                            }
                         }
                     }
                 }
@@ -103,13 +107,6 @@ struct FuelRecordForm: View {
                 Alert(
                     title: Text("Error"),
                     message: Text(alertMessage!),
-                    dismissButton: .default(Text("OK"))
-                )
-            }
-            .alert(isPresented: $showSuccessAlert) {
-                Alert(
-                    title: Text("Success"),
-                    message: Text("Fuel log saved!"),
                     dismissButton: .default(Text("OK"))
                 )
             }
@@ -148,7 +145,8 @@ struct FuelRecordForm: View {
         let result = await fuelService.postFuelRecord(fuel: fuel)
         print(result!.id)
         shouldRefreshList = true
-        showSuccessAlert = true
+//        showSuccessAlert = true
+        shouldDismissSheet = true
     }
 }
 

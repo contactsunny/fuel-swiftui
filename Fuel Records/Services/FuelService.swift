@@ -15,8 +15,11 @@ class FuelService {
     private let vehicleService = VehicleService()
     
     func getFuelRecords() async -> [Fuel]? {
+        let startDateString = CustomUtil.getFormattedDateString(date: CustomUtil.addOrSubtractMonth(month: -3), startTime: true)
+        let endDateString = CustomUtil.getFormattedDateString(date: CustomUtil.addOrSubtractDay(day: 1), startTime: false)
+        
         var fuelRecords: [Fuel]?
-        let data = await self.httpUtil.makeGetCall(endpoint: "fuel")
+        let data = await self.httpUtil.makeGetCall(endpoint: "fuel?startDate=\(startDateString)&endDate=\(endDateString)")
         let decoder = JSONDecoder()
         
         do {
