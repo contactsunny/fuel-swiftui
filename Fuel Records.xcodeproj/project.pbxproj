@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -35,21 +35,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A3C908CA2C9D21E900FB9B7F /* Fuel Records */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Fuel Records";
-			sourceTree = "<group>";
-		};
-		A3C908DD2C9D21EA00FB9B7F /* Fuel RecordsTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Fuel RecordsTests";
-			sourceTree = "<group>";
-		};
-		A3C908E72C9D21EA00FB9B7F /* Fuel RecordsUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Fuel RecordsUITests";
-			sourceTree = "<group>";
-		};
+		A3C908CA2C9D21E900FB9B7F /* Fuel Records */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Fuel Records"; sourceTree = "<group>"; };
+		A3C908DD2C9D21EA00FB9B7F /* Fuel RecordsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Fuel RecordsTests"; sourceTree = "<group>"; };
+		A3C908E72C9D21EA00FB9B7F /* Fuel RecordsUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Fuel RecordsUITests"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +181,7 @@
 				};
 			};
 			buildConfigurationList = A3C908C32C9D21E900FB9B7F /* Build configuration list for PBXProject "Fuel Records" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -201,7 +190,6 @@
 			);
 			mainGroup = A3C908BF2C9D21E900FB9B7F;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = A3C908C92C9D21E900FB9B7F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
