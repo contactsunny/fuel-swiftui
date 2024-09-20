@@ -47,6 +47,11 @@ struct FuelRecordsView: View {
                     }
                 }
             }
+            .refreshable {
+                Task {
+                    fuelRecords = await fuelService.getFuelRecords()!
+                }
+            }
             .sheet(isPresented: $showAddFuelSheet,
                     onDismiss: {
                 showAddFuelSheet = false
