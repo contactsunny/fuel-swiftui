@@ -10,12 +10,14 @@ import SwiftUI
 struct FuelRecordRowView: View {
     @Binding var fuel: Fuel
     var body: some View {
-        NavigationLink(destination: FuelRecordDetailsView()) {
+        let vehicleName = ($fuel.wrappedValue.vehicle != nil) ? $fuel.wrappedValue.vehicle?.name : "Not available"
+        
+        NavigationLink(destination: FuelRecordDetailsView(fuel: $fuel)) {
             VStack {
                 HStack{
                     Text("Vehicle")
                     Spacer()
-                    Text("\($fuel.wrappedValue.vehicleId)")
+                    Text(vehicleName!)
                 }
                 HStack {
                     Text("Amount")
@@ -25,7 +27,7 @@ struct FuelRecordRowView: View {
                 HStack {
                     Text("Litres")
                     Spacer()
-                    Text("\($fuel.wrappedValue.litres)")
+                    Text("\($fuel.wrappedValue.litres, specifier: "%.2f")")
                 }
                 
                 //            HStack {

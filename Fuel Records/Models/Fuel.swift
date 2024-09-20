@@ -69,6 +69,7 @@ class Fuel: Identifiable, Decodable {
     var vehicleCategoryId: String
 //    var createdAt: Date
 //    var updatedAt: Date?
+    var vehicle: Vehicle?
     
     
 }
