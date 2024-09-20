@@ -24,6 +24,12 @@ class VehicleCategory: Identifiable, Decodable {
         self.userId = try container.decode(String.self, forKey: .userId)
     }
     
+    init(id: String, name: String) {
+        self.id = id
+        self.name = name
+        self.userId = ""
+    }
+    
     let id: String
     var name: String
     let userId: String

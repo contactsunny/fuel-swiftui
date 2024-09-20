@@ -23,6 +23,7 @@ class Fuel: Identifiable, Decodable {
         case vehicleCategoryId
         case createdAt
         case updatedAt
+        case vehicle
         case _$observationRegistrar
     }
     
@@ -40,9 +41,10 @@ class Fuel: Identifiable, Decodable {
         self._vehicleCategoryId = try container.decode(String.self, forKey: .vehicleCategoryId)
         self._createdAt = try container.decode(Double.self, forKey: .createdAt)
         self._updatedAt = try container.decodeIfPresent(Double.self, forKey: .updatedAt)
+        self.vehicle = try container.decodeIfPresent(Vehicle.self, forKey: .vehicle)
     }
     
-    internal init(id: String, userId: String, date: Double, vehicleId: String, litres: Double, amount: Double, costPerLitre: Double, fuelType: String, paymentType: String, vehicleCategoryId: String, createdAt: Double, updatedAt: Double?) {
+    internal init(id: String, userId: String, date: Double, vehicleId: String, litres: Double, amount: Double, costPerLitre: Double, fuelType: String, paymentType: String, vehicleCategoryId: String, createdAt: Double, updatedAt: Double?, vehicle: Vehicle?) {
         self.id = id
         self.userId = userId
         self.date = date
@@ -55,6 +57,7 @@ class Fuel: Identifiable, Decodable {
         self.vehicleCategoryId = vehicleCategoryId
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.vehicle = vehicle
     }
     
     let id: String

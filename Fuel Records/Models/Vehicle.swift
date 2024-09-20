@@ -17,6 +17,7 @@ class Vehicle: Identifiable, Decodable {
         case name
         case vehicleNumber
         case userId
+        case vehicleCategory
         case _$observationRegistrar
     }
     
@@ -27,14 +28,15 @@ class Vehicle: Identifiable, Decodable {
         self._name = try container.decode(String.self, forKey: .name)
         self._vehicleNumber = try container.decode(String.self, forKey: .vehicleNumber)
         self.userId = try container.decode(String.self, forKey: .userId)
+        self.vehicleCategory = try container.decodeIfPresent(VehicleCategory.self, forKey: .vehicleCategory)
     }
     
-    internal init (id: String, name: String) {
+    internal init (id: String, name: String, vehicleNumber: String, vehicleCategory: VehicleCategory?) {
         self.id = id
         self.name = name
-        self.vehicleCategory = nil
+        self.vehicleCategory = vehicleCategory
         self.vehicleCategoryId = ""
-        self.vehicleNumber = ""
+        self.vehicleNumber = vehicleNumber
         self.userId = ""
     }
     
