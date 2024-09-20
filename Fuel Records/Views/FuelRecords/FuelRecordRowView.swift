@@ -13,31 +13,41 @@ struct FuelRecordRowView: View {
         let vehicleName = ($fuel.wrappedValue.vehicle != nil) ? $fuel.wrappedValue.vehicle?.name : "Not available"
         
         NavigationLink(destination: FuelRecordDetailsView(fuel: $fuel)) {
-            VStack {
+            HStack {
                 HStack{
-                    Text("Vehicle")
-                    Spacer()
+                    Image(systemName: "car").padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 5))
                     Text(vehicleName!)
-                }
-                HStack {
-                    Text("Date")
+                        .lineLimit(2)
+                        .truncationMode(.tail)
                     Spacer()
-                    Text("\(CustomUtil.getFormattedDateFromTimestamp(timestamp: $fuel.wrappedValue.date))")
+                }.padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                Spacer()
+                VStack {
+                    HStack {
+                        //                    Text("Date")
+                        //                    Spacer()
+                        Image(systemName: "calendar").padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 5))
+                        Text("\(CustomUtil.getFormattedDateFromTimestamp(timestamp: $fuel.wrappedValue.date))")
+                        Spacer()
+                    }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
+                    HStack {
+                        //                    Text("Amount")
+                        //                    Spacer()
+                        Image(systemName: "indianrupeesign").padding(EdgeInsets(top: 0, leading:5, bottom: 0, trailing: 6))
+                        Text("\($fuel.wrappedValue.amount, specifier: "%.2f")")
+                        Spacer()
+                    }.padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    
+//                                HStack {
+//                                    Text("\($fuel.wrappedValue.vehicleId)").frame(maxWidth: .infinity)
+//                                    Text("Rs. \($fuel.wrappedValue.amount, specifier: "%.2f")").frame(maxWidth: .infinity)
+//                                    //            }
+//                                    //            HStack {
+//                                    Text("\($fuel.wrappedValue.vehicleId)").frame(maxWidth: .infinity)
+//                                    Text("\($fuel.wrappedValue.amount, specifier: "%.2f")").frame(maxWidth: .infinity)
+//                                }
+                    
                 }
-                HStack {
-                    Text("Amount")
-                    Spacer()
-                    Text("Rs. \($fuel.wrappedValue.amount, specifier: "%.2f")")
-                }
-                
-                //            HStack {
-//                Text("\($fuel.wrappedValue.vehicleId)").frame(maxWidth: .infinity)
-//                Text("Rs. \($fuel.wrappedValue.amount, specifier: "%.2f")").frame(maxWidth: .infinity)
-//                //            }
-//                //            HStack {
-//                Text("\($fuel.wrappedValue.vehicleId)").frame(maxWidth: .infinity)
-//                Text("\($fuel.wrappedValue.amount, specifier: "%.2f")").frame(maxWidth: .infinity)
-                //            }
                 
             }
         }

@@ -29,6 +29,15 @@ class Vehicle: Identifiable, Decodable {
         self.userId = try container.decode(String.self, forKey: .userId)
     }
     
+    internal init (id: String, name: String) {
+        self.id = id
+        self.name = name
+        self.vehicleCategory = nil
+        self.vehicleCategoryId = ""
+        self.vehicleNumber = ""
+        self.userId = ""
+    }
+    
     let id: String
     var vehicleCategoryId: String
     var name: String
