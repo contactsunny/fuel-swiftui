@@ -45,5 +45,5 @@ struct FuelRecordRowView: View {
 }
 
 #Preview {
-    FuelRecordRowView(fuel: .constant(Fuel(id: "someID", userId: "someId", date: 1726819273, vehicleId: "someId", litres: 23.45, amount: 1234.56, costPerLitre: 90.12, fuelType: "PETROL", paymentType: "UPI", vehicleCategoryId: "someId", createdAt: 1726819273, updatedAt: 1726819273)))
+    FuelRecordRowView(fuel: .constant(Fuel(id: "someID", userId: "someId", date: 1719923258485, vehicleId: "someId", litres: 23.45, amount: 1234.56, costPerLitre: 90.12, fuelType: "PETROL", paymentType: "UPI", vehicleCategoryId: "someId", createdAt: 1719923258485, updatedAt: 1719923258485)))
 }

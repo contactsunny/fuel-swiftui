@@ -10,7 +10,7 @@ import Foundation
 class CustomUtil {
     
     static func getFormattedDateFromTimestamp(timestamp: Double) -> String {
-        let date = NSDate(timeIntervalSince1970: timestamp)
+        let date = NSDate(timeIntervalSince1970: timestamp / 1000)
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
         dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
