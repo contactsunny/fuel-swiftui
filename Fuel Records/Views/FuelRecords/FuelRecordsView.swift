@@ -22,7 +22,7 @@ struct FuelRecordsView: View {
                 .task {
                     fuelRecords = await fuelService.getFuelRecords()!
                     showProgressView = false
-//                    shouldRefreshList = false
+                    shouldRefreshList = false
                 }
         } else {
             NavigationStack {
@@ -56,14 +56,14 @@ struct FuelRecordsView: View {
                         .navigationTitle("Add Fuel Log")
                 }
             }
-//            .task {
-//                if shouldRefreshList {
-//                    showProgressView = true
-//                    fuelRecords = await fuelService.getFuelRecords()!
-//                    showProgressView = false
-//                    shouldRefreshList = false
-//                }
-//            }
+            .task {
+                if shouldRefreshList {
+                    showProgressView = true
+                    fuelRecords = await fuelService.getFuelRecords()!
+                    showProgressView = false
+                    shouldRefreshList = false
+                }
+            }
         }
     }
 }
