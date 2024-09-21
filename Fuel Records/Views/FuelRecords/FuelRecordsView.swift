@@ -51,7 +51,9 @@ struct FuelRecordsView: View {
             }
             .refreshable {
                 Task {
+                    showProgressView = true
                     fuelRecords = await fuelService.getFuelRecords()!
+                    showProgressView = false
                 }
             }
             .sheet(isPresented: $showAddFuelSheet,
