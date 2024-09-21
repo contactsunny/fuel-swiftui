@@ -8,119 +8,139 @@
 import SwiftUI
 
 struct FuelRecordDetailsView: View {
+    @Environment(\.presentationMode) var presentationMode
+    var fuelService = FuelService()
     
     @Binding var fuel: Fuel
     
 //    UI Controlling Variables
     @State var shouldShowDeleteAlert: Bool = false
     @State var showEditFuelSheet: Bool = false
+    @State var showProgressView = false
     
     var body: some View {
-        NavigationStack {
-            List {
-//                Vehicle Info
-                Section(header: Text("Vehicle Info")) {
-                    HStack {
-                        Text("Vehicle")
-                        Spacer()
-                        Text("\(fuel.vehicle!.name)")
-                    }
-                    HStack {
-                        Text("Registration Number")
-                        Spacer()
-                        Text("\(fuel.vehicle!.vehicleNumber)")
-                    }
-                    HStack {
-                        Text("Category")
-                        Spacer()
-                        Text("\(fuel.vehicle!.vehicleCategory!.name)")
-                    }
-                }
-//                Record Info
-                Section(header: Text("Record Info")) {
-                    HStack {
-                        Text("Date")
-                        Spacer()
-                        Text("\(CustomUtil.getFormattedDateFromTimestamp(timestamp: fuel.date))")
-                    }
-                }
-//                Fuel Info
-                Section(header: Text("Fuel Info")) {
-                    HStack {
-                        Text("Fule Type")
-                        Spacer()
-                        Text("\(fuel.fuelType.capitalized)")
-                    }
-                    HStack {
-                        Text("Volume")
-                        Spacer()
-                        Text("\(fuel.litres, specifier: "%.2f") L")
-                    }
-                    HStack {
-                        Text("Cost Per Litre")
-                        Spacer()
-                        Text("Rs. \(fuel.costPerLitre, specifier: "%.2f")")
-                    }
-                }
-//                Payment Info
-                Section(header: Text("Payment Info")) {
-                    
-                    HStack {
-                        Text("Total Paid")
-                        Spacer()
-                        Text("Rs. \(fuel.amount, specifier: "%.2f")")
-                    }
-                    HStack {
-                        Text("Payment Method")
-                        Spacer()
-                        Text("\(CustomUtil.getFormattedString(str: fuel.paymentType))")
-                    }
-                }
+        ZStack {
+            if showProgressView {
+                ProgressView().zIndex(1)
             }
-            .navigationTitle(Text("Fuel Log"))
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        shouldShowDeleteAlert = true
-                    } label: {
-                        Image(systemName: "trash")
+            NavigationStack {
+                List {
+                    //                Vehicle Info
+                    Section(header: Text("Vehicle Info")) {
+                        HStack {
+                            Text("Vehicle")
+                            Spacer()
+                            Text("\(fuel.vehicle!.name)")
+                        }
+                        HStack {
+                            Text("Registration Number")
+                            Spacer()
+                            Text("\(fuel.vehicle!.vehicleNumber)")
+                        }
+                        HStack {
+                            Text("Category")
+                            Spacer()
+                            Text("\(fuel.vehicle!.vehicleCategory!.name)")
+                        }
+                    }
+                    //                Record Info
+                    Section(header: Text("Record Info")) {
+                        HStack {
+                            Text("Date")
+                            Spacer()
+                            Text("\(CustomUtil.getFormattedDateFromTimestamp(timestamp: fuel.date))")
+                        }
+                    }
+                    //                Fuel Info
+                    Section(header: Text("Fuel Info")) {
+                        HStack {
+                            Text("Fule Type")
+                            Spacer()
+                            Text("\(fuel.fuelType.capitalized)")
+                        }
+                        HStack {
+                            Text("Volume")
+                            Spacer()
+                            Text("\(fuel.litres, specifier: "%.2f") L")
+                        }
+                        HStack {
+                            Text("Cost Per Litre")
+                            Spacer()
+                            Text("Rs. \(fuel.costPerLitre, specifier: "%.2f")")
+                        }
+                    }
+                    //                Payment Info
+                    Section(header: Text("Payment Info")) {
                         
+                        HStack {
+                            Text("Total Paid")
+                            Spacer()
+                            Text("Rs. \(fuel.amount, specifier: "%.2f")")
+                        }
+                        HStack {
+                            Text("Payment Method")
+                            Spacer()
+                            Text("\(CustomUtil.getFormattedString(str: fuel.paymentType))")
+                        }
                     }
                 }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Edit") {
-                        showEditFuelSheet = true
+                .disabled(showProgressView)
+                .navigationTitle(Text("Fuel Log"))
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            shouldShowDeleteAlert = true
+                        } label: {
+                            Image(systemName: "trash")
+                            
+                        }
                     }
-                }
-            }
-            .alert(isPresented: $shouldShowDeleteAlert) {
-                Alert(title: Text("Are you sure?"),
-                      primaryButton: .cancel(),
-                      secondaryButton: .destructive(Text("Yes"), action: {
                     
-                }))
-            }
-            .sheet(isPresented: $showEditFuelSheet,
-                   onDismiss: {
-                showEditFuelSheet = false
-            }) {
-                NavigationStack {
-                    EditFuelRecordForm(
-                        fuel: $fuel
-                    )
-                    .navigationTitle("Edit Fuel Log")
-                }.onDisappear() {
-//                    Task {
-//                        if shouldRefreshList {
-//                            showProgressView = true
-//                            fuelRecords = await fuelService.getFuelRecords()!
-//                            showProgressView = false
-//                            shouldRefreshList = false
-//                        }
-//                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Edit") {
+                            showEditFuelSheet = true
+                        }
+                    }
+                }
+                .alert(isPresented: $shouldShowDeleteAlert) {
+                    Alert(title: Text("Are you sure?"),
+                          primaryButton: .cancel(),
+                          secondaryButton: .destructive(Text("Yes"), action: {
+                        Task  {
+                            await delete()
+                        }
+                    }))
+                }
+                .sheet(isPresented: $showEditFuelSheet,
+                       onDismiss: {
+                    showEditFuelSheet = false
+                }) {
+                    NavigationStack {
+                        EditFuelRecordForm(
+                            fuel: $fuel
+                        )
+                        .navigationTitle("Edit Fuel Log")
+                    }.onDisappear() {
+                        //                    Task {
+                        //                        if shouldRefreshList {
+                        //                            showProgressView = true
+                        //                            fuelRecords = await fuelService.getFuelRecords()!
+                        //                            showProgressView = false
+                        //                            shouldRefreshList = false
+                        //                        }
+                        //                    }
+                    }
                 }
             }
+        }
+    }
+    
+    func delete() async {
+        Task {
+            showProgressView = true
+            print("Deleteing \(fuel.id) \(fuel.amount)")
+            await fuelService.deleteFuelRecord(id: fuel.id)
+            self.presentationMode.wrappedValue.dismiss()
         }
     }
 }

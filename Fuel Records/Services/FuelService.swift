@@ -66,4 +66,12 @@ class FuelService {
         }
         return nil
     }
+    
+    func deleteFuelRecord(id: String) async {
+        do {
+            let _ = await self.httpUtil.makeDeleteCall(endpoint: "fuel/\(id)")
+        } catch let error {
+            print(error)
+        }
+    }
 }

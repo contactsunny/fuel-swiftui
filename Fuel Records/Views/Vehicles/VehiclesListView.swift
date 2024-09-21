@@ -14,6 +14,9 @@ struct VehiclesListView: View {
     @State var showProgressView = true
     @State var shouldRefreshList = false
     @State var showAddVehicleSheet = false
+    @State var showDeleteAlert: Bool = false
+    
+    @State var deleteIndexSet: IndexSet = []
     
     var vehicleService = VehicleService()
     
@@ -27,8 +30,10 @@ struct VehiclesListView: View {
                 ForEach($vehicles) {
                     vehicle in
                     VehicleRowView(vehicle: vehicle)
-                }.onDelete(perform: { indexSet in
-                    vehicles.remove(atOffsets: indexSet)
+                }
+                .onDelete(perform: { indexSet in
+                    deleteIndexSet = indexSet
+                    showDeleteAlert = true
                 })
             }.toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -73,6 +78,29 @@ struct VehiclesListView: View {
                         }
                     }
                 }
+            }
+            .alert(isPresented: $showDeleteAlert) {
+                Alert(title: Text("Are you sure?"),
+                      primaryButton: .cancel(),
+                      secondaryButton: .destructive(Text("Yes"),
+                                                    action: {
+                    Task  {
+                        await delete()
+                    }
+                }))
+            }
+        }
+    }
+    
+    func delete() async {
+        Task {
+            for index in self.deleteIndexSet {
+                let vehicle = vehicles[index]
+                print("Deleteing \(vehicle.id) \(vehicle.name)")
+                await vehicleService.deleteVehicle(id: vehicle.id)
+                showProgressView = true
+                vehicles = await vehicleService.getVehicles()!
+                showProgressView = false
             }
         }
     }

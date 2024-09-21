@@ -63,4 +63,12 @@ class VehicleService {
         }
         return nil
     }
+    
+    func deleteVehicle(id: String) async {
+        do {
+            let _ = await self.httpUtil.makeDeleteCall(endpoint: "vehicle/\(id)")
+        } catch let error {
+            print(error)
+        }
+    }
 }

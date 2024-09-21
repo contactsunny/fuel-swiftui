@@ -78,4 +78,19 @@ class HttpUtil {
         }
         return nil
     }
+    
+    func makeDeleteCall(endpoint: String) async {
+        var request = getRequest(endpoint: endpoint)
+        print("Deleting \(endpoint)")
+        request.httpMethod = "DELETE"
+//        request.httpBody = data
+//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        do {
+            let _ = try await self.session.data(for: request)
+//            return result.0
+        } catch let error {
+            logger.error("\(error.localizedDescription)")
+        }
+    }
 }
