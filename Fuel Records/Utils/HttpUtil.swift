@@ -81,7 +81,6 @@ class HttpUtil {
     
     func makeDeleteCall(endpoint: String) async {
         var request = getRequest(endpoint: endpoint)
-        print("Deleting \(endpoint)")
         request.httpMethod = "DELETE"
 //        request.httpBody = data
 //        request.addValue("application/json", forHTTPHeaderField: "Content-Type")

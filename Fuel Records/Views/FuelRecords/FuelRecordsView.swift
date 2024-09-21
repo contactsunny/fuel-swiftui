@@ -9,7 +9,9 @@ import SwiftUI
 
 struct FuelRecordsView: View {
 //    @Environment(HttpUtil.self) var httpUtil
-//    @Binding var httpUtil: HttpUtil
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @State private var orientation = UIDevice.current.orientation
+    
     @State var fuelRecords: [Fuel]
     var fuelService = FuelService()
     @State var showAddFuelSheet: Bool = false
@@ -26,38 +28,79 @@ struct FuelRecordsView: View {
             if showProgressView {
                 ProgressView().zIndex(1)
             }
-            NavigationStack {
-                List {
-                    Section(header: Text("Quick Analytics")) {
-                        HStack {
-                            Text("Total Spend")
-                            Spacer()
-                            Text("Rs. \(totalFuelCost, specifier: "%.2f")")
+            VStack {
+                if (orientation == .landscapeLeft || orientation == .landscapeRight) && horizontalSizeClass == .regular {
+                    NavigationView {
+                        List {
+                            Section(header: Text("Quick Analytics")) {
+                                HStack {
+                                    Text("Total Spend")
+                                    Spacer()
+                                    Text("Rs. \(totalFuelCost, specifier: "%.2f")")
+                                }
+                                HStack {
+                                    Text("Total Fuel Volume")
+                                    Spacer()
+                                    Text("\(totalFuelVolume, specifier: "%.2f") L")
+                                }
+                            }
+                            ForEach($fuelRecords) {
+                                record in
+                                FuelRecordRowView(fuel: record, shouldRefreshList: $shouldRefreshList)
+                            }
+                            .onDelete(perform: { indexSet in
+                                deleteIndexSet = indexSet
+                                showDeleteAlert = true
+                            })
                         }
-                        HStack {
-                            Text("Total Fuel Volume")
-                            Spacer()
-                            Text("\(totalFuelVolume, specifier: "%.2f") L")
+                        .navigationTitle(Text("Fuel Logs"))
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                EditButton()
+                            }
+                            
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button("Add") {
+                                    showAddFuelSheet = true
+                                }
+                            }
                         }
                     }
-                    ForEach($fuelRecords) {
-                        record in
-                        FuelRecordRowView(fuel: record)
-                    }
-                    .onDelete(perform: { indexSet in
-                        deleteIndexSet = indexSet
-                        showDeleteAlert = true
-                    })
-                }
-                .navigationTitle(Text("Fuel Logs"))
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        EditButton()
-                    }
-                    
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Add") {
-                            showAddFuelSheet = true
+                } else {
+                    NavigationStack {
+                        List {
+                            Section(header: Text("Quick Analytics")) {
+                                HStack {
+                                    Text("Total Spend")
+                                    Spacer()
+                                    Text("Rs. \(totalFuelCost, specifier: "%.2f")")
+                                }
+                                HStack {
+                                    Text("Total Fuel Volume")
+                                    Spacer()
+                                    Text("\(totalFuelVolume, specifier: "%.2f") L")
+                                }
+                            }
+                            ForEach($fuelRecords) {
+                                record in
+                                FuelRecordRowView(fuel: record, shouldRefreshList: $shouldRefreshList)
+                            }
+                            .onDelete(perform: { indexSet in
+                                deleteIndexSet = indexSet
+                                showDeleteAlert = true
+                            })
+                        }
+                        .navigationTitle(Text("Fuel Logs"))
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                EditButton()
+                            }
+                            
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button("Add") {
+                                    showAddFuelSheet = true
+                                }
+                            }
                         }
                     }
                 }
@@ -88,15 +131,6 @@ struct FuelRecordsView: View {
                 NavigationStack {
                     FuelRecordForm(shouldRefreshList: $shouldRefreshList)
                         .navigationTitle("Add Fuel Log")
-                }.onDisappear() {
-                    Task {
-                        if shouldRefreshList {
-                            showProgressView = true
-                            fuelRecords = await fuelService.getFuelRecords()!
-                            showProgressView = false
-                            shouldRefreshList = false
-                        }
-                    }
                 }
             }
             .alert(isPresented: $showDeleteAlert) {
@@ -109,6 +143,18 @@ struct FuelRecordsView: View {
                         }
                 }))
             }
+            .onChange(of: shouldRefreshList) {
+                Task {
+                    showProgressView = true
+                    fuelRecords = await fuelService.getFuelRecords()!
+                    showProgressView = false
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                orientation = UIDevice.current.orientation
+                print("Orientation changed: \(orientation)")
+            }
+            .environment(\.horizontalSizeClass, orientation == .portrait ? .compact : .regular)
         }
     }
     

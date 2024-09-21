@@ -9,10 +9,14 @@ import SwiftUI
 
 struct FuelRecordRowView: View {
     @Binding var fuel: Fuel
+    @Binding var shouldRefreshList: Bool
+    
     var body: some View {
         let vehicleName = ($fuel.wrappedValue.vehicle != nil) ? $fuel.wrappedValue.vehicle?.name : "Not available"
         
-        NavigationLink(destination: FuelRecordDetailsView(fuel: $fuel)) {
+        NavigationLink(destination:
+                        FuelRecordDetailsView(fuel: $fuel, shouldRefreshList: $shouldRefreshList))
+        {
             Section {
                 VStack {
                     VStack(spacing: 3) {
@@ -41,34 +45,37 @@ struct FuelRecordRowView: View {
                 }
             }
         }
+        
     }
 }
 
 #Preview {
-    FuelRecordRowView(fuel: .constant(
-        Fuel(
-            id: "someID",
-            userId: "someId",
-            date: 1719923258485,
-            vehicleId: "someId",
-            litres: 23.45,
-            amount: 1234.56,
-            costPerLitre: 90.12,
-            fuelType: "PETROL",
-            paymentType: "UPI",
-            vehicleCategoryId: "someId",
-            createdAt: 1719923258485,
-            updatedAt: 1719923258485,
-            vehicle: Vehicle(
-                id: "SomeID",
-                name: "Skoda Kushaq",
-                vehicleNumber: "KA09 MH1740",
-                vehicleCategory: VehicleCategory(
-                    id: "someID",
-                    name: "Car"
+    FuelRecordRowView(
+        fuel: .constant(
+            Fuel(
+                id: "someID",
+                userId: "someId",
+                date: 1719923258485,
+                vehicleId: "someId",
+                litres: 23.45,
+                amount: 1234.56,
+                costPerLitre: 90.12,
+                fuelType: "PETROL",
+                paymentType: "UPI",
+                vehicleCategoryId: "someId",
+                createdAt: 1719923258485,
+                updatedAt: 1719923258485,
+                vehicle: Vehicle(
+                    id: "SomeID",
+                    name: "Skoda Kushaq",
+                    vehicleNumber: "KA09 MH1740",
+                    vehicleCategory: VehicleCategory(
+                        id: "someID",
+                        name: "Car"
+                    )
                 )
             )
-        )
-        )
+        ),
+        shouldRefreshList: .constant(false)
     )
 }

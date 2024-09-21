@@ -14,7 +14,6 @@ struct Fuel_RecordsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(httpUtil: $httpUtil)
-//                .environment(httpUtil)
         }
     }
 }

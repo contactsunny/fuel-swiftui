@@ -9,9 +9,11 @@ import SwiftUI
 
 struct FuelRecordDetailsView: View {
     @Environment(\.presentationMode) var presentationMode
+//    @Environment(\.shouldRefreshFuelLogList) var shouldRefreshFuelLogList
     var fuelService = FuelService()
     
     @Binding var fuel: Fuel
+    @Binding var shouldRefreshList: Bool
     
 //    UI Controlling Variables
     @State var shouldShowDeleteAlert: Bool = false
@@ -120,15 +122,6 @@ struct FuelRecordDetailsView: View {
                             fuel: $fuel
                         )
                         .navigationTitle("Edit Fuel Log")
-                    }.onDisappear() {
-                        //                    Task {
-                        //                        if shouldRefreshList {
-                        //                            showProgressView = true
-                        //                            fuelRecords = await fuelService.getFuelRecords()!
-                        //                            showProgressView = false
-                        //                            shouldRefreshList = false
-                        //                        }
-                        //                    }
                     }
                 }
             }
@@ -137,39 +130,41 @@ struct FuelRecordDetailsView: View {
     
     func delete() async {
         Task {
-            showProgressView = true
-            print("Deleteing \(fuel.id) \(fuel.amount)")
+            self.showProgressView = true
             await fuelService.deleteFuelRecord(id: fuel.id)
+            self.shouldRefreshList = true
             self.presentationMode.wrappedValue.dismiss()
         }
     }
 }
 
 #Preview {
-    FuelRecordDetailsView(fuel: .constant(
-        Fuel(
-            id: "someID",
-            userId: "someId",
-            date: 1719923258485,
-            vehicleId: "someId",
-            litres: 23.45,
-            amount: 1234.56,
-            costPerLitre: 90.12,
-            fuelType: "PETROL",
-            paymentType: "CREDIT_CARD",
-            vehicleCategoryId: "someId",
-            createdAt: 1719923258485,
-            updatedAt: 1719923258485,
-            vehicle: Vehicle(
-                id: "SomeID",
-                name: "Skoda Kushaq",
-                vehicleNumber: "KA09 MH1740",
-                vehicleCategory: VehicleCategory(
-                    id: "someID",
-                    name: "Car"
+    FuelRecordDetailsView(
+        fuel: .constant(
+            Fuel(
+                id: "someID",
+                userId: "someId",
+                date: 1719923258485,
+                vehicleId: "someId",
+                litres: 23.45,
+                amount: 1234.56,
+                costPerLitre: 90.12,
+                fuelType: "PETROL",
+                paymentType: "CREDIT_CARD",
+                vehicleCategoryId: "someId",
+                createdAt: 1719923258485,
+                updatedAt: 1719923258485,
+                vehicle: Vehicle(
+                    id: "SomeID",
+                    name: "Skoda Kushaq",
+                    vehicleNumber: "KA09 MH1740",
+                    vehicleCategory: VehicleCategory(
+                        id: "someID",
+                        name: "Car"
+                    )
                 )
             )
-        )
-    )
+        ),
+        shouldRefreshList: .constant(false)
     )
 }
