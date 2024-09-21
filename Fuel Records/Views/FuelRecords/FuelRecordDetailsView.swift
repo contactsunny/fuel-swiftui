@@ -11,6 +11,10 @@ struct FuelRecordDetailsView: View {
     
     @Binding var fuel: Fuel
     
+//    UI Controlling Variables
+    @State var shouldShowDeleteAlert: Bool = false
+    @State var showEditFuelSheet: Bool = false
+    
     var body: some View {
         NavigationStack {
             List {
@@ -72,7 +76,51 @@ struct FuelRecordDetailsView: View {
                         Text("\(CustomUtil.getFormattedString(str: fuel.paymentType))")
                     }
                 }
-            }.navigationTitle(Text("Fuel Log"))
+            }
+            .navigationTitle(Text("Fuel Log"))
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        shouldShowDeleteAlert = true
+                    } label: {
+                        Image(systemName: "trash")
+                        
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Edit") {
+                        showEditFuelSheet = true
+                    }
+                }
+            }
+            .alert(isPresented: $shouldShowDeleteAlert) {
+                Alert(title: Text("Are you sure?"),
+                      primaryButton: .cancel(),
+                      secondaryButton: .destructive(Text("Yes"), action: {
+                    
+                }))
+            }
+            .sheet(isPresented: $showEditFuelSheet,
+                   onDismiss: {
+                showEditFuelSheet = false
+            }) {
+                NavigationStack {
+                    EditFuelRecordForm(
+                        fuel: $fuel
+                    )
+                    .navigationTitle("Edit Fuel Log")
+                }.onDisappear() {
+//                    Task {
+//                        if shouldRefreshList {
+//                            showProgressView = true
+//                            fuelRecords = await fuelService.getFuelRecords()!
+//                            showProgressView = false
+//                            shouldRefreshList = false
+//                        }
+//                    }
+                }
+            }
         }
     }
 }

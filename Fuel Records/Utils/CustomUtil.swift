@@ -68,4 +68,20 @@ class CustomUtil {
         }
         return "\(dateString)235959"
     }
+    
+    static func getDateStringForApiCalls(date: Date?) -> String {
+        let dtf = DateFormatter()
+        dtf.timeZone = TimeZone.current
+        dtf.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        /// "2020-05-28 00:20:00 GMT+5:30"
+        var stringDate = dtf.string(from: Date.now)
+        if date != nil {
+            stringDate = dtf.string(from: date!)
+        }
+        stringDate = stringDate.replacingOccurrences(of: " ", with: "T")
+        stringDate = stringDate + "Z"
+        
+        return stringDate
+    }
 }

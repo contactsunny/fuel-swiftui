@@ -1,32 +1,32 @@
 //
-//  FuelRecordForm.swift
+//  EditFuelRecordForm.swift
 //  Fuel Records
 //
-//  Created by Sunny Srinidhi on 20/09/24.
+//  Created by Sunny Srinidhi on 21/09/24.
 //
 
 import SwiftUI
 
-struct FuelRecordForm: View {
+struct EditFuelRecordForm: View {
     
     @Environment(\.dismiss) private var dismiss
     
-//    Services
+    //    Services
     let vehicleService = VehicleService()
     var fuelService = FuelService()
     
-//    Data
+    //    Data
     @State var vehicles: [Vehicle] = []
     
-//    UI Controlling Variables
-    @Binding var shouldRefreshList: Bool
+    //    UI Controlling Variables
+//    @Binding var shouldRefreshList: Bool
     @State var showProgressView = true
     @State var showErrorAlert: Bool = false
     @State var shouldDismissSheet: Bool = false
     @State var alertMessage: String?
     @State var showApiCallProgressView: Bool = false
     
-//    Form controls
+    //    Form controls
     @State var amount: Double?
     @State var litres: Double?
     @State var fuelType = "PETROL"
@@ -38,13 +38,15 @@ struct FuelRecordForm: View {
         return (amount! / litres!)
     }
     
+    @Binding var fuel: Fuel
+    
     
     var body: some View {
         if showProgressView {
             ProgressView()
                 .task {
                     vehicles = await vehicleService.getVehicles()!
-                    vehicle = vehicles.first?.id
+//                    fuel.vehicle = vehicles.first?.id
                     showProgressView = false
                 }
         } else {
@@ -89,13 +91,24 @@ struct FuelRecordForm: View {
                             }
                         }
                         Section {
-                            DatePicker(selection: $date, displayedComponents: .date) {
+                            DatePicker(
+                                selection: $date,
+                                displayedComponents: .date
+                            ) {
                                 Text("Date")
                             }
                         }
                     }
                 }
                 .disabled(showApiCallProgressView)
+                .onAppear(perform: {
+                    paymentMethod = fuel.paymentType
+                    vehicle = fuel.vehicleId
+                    amount = fuel.amount
+                    litres = fuel.litres
+                    fuelType = fuel.fuelType
+                    date = Date(timeIntervalSince1970: fuel.date/1000)
+                })
                 .navigationTitle("Add Fuel Log")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -132,18 +145,18 @@ struct FuelRecordForm: View {
     
     func saveFuelLog() async {
         guard amount != nil, litres != nil, costPerLitre != nil,
-                !amount!.isNaN, !amount!.isZero, !litres!.isNaN,
-                !litres!.isZero, !costPerLitre!.isNaN,
-                !costPerLitre!.isZero
+              !amount!.isNaN, !amount!.isZero, !litres!.isNaN,
+              !litres!.isZero, !costPerLitre!.isNaN,
+              !costPerLitre!.isZero
         else {
             alertMessage = "Please fill in all fields"
             showErrorAlert = true
             return
         }
         
-        let fuel = FuelRequest(
-            id: nil,
-            userId: nil,
+        let updatedFuel = FuelRequest(
+            id: fuel.id,
+            userId: fuel.userId,
             date: CustomUtil.getDateStringForApiCalls(date: date),
             fuelType: fuelType,
             litres: litres!,
@@ -152,13 +165,40 @@ struct FuelRecordForm: View {
             amount: amount!,
             vehicleId: vehicle!
         )
-        let _ = await fuelService.saveFuelRecord(fuel: fuel)
+        fuel = await fuelService.updateFuelRecord(fuel: updatedFuel)!
+        for vehicle in vehicles {
+            if vehicle.id == fuel.vehicleId {
+                fuel.vehicle = vehicle
+            }
+        }
         
-        shouldRefreshList = true
+//        shouldRefreshList = true
         shouldDismissSheet = true
     }
 }
 
 #Preview {
-    FuelRecordForm(shouldRefreshList: .constant(false))
+    EditFuelRecordForm(fuel: .constant(Fuel(
+        id: "someID",
+        userId: "someId",
+        date: 1719923258,
+        vehicleId: "someId",
+        litres: 23.45,
+        amount: 1234.56,
+        costPerLitre: 90.12,
+        fuelType: "DIESEL",
+        paymentType: "UPI",
+        vehicleCategoryId: "someId",
+        createdAt: 1719923258485,
+        updatedAt: 1719923258485,
+        vehicle: Vehicle(
+            id: "SomeID",
+            name: "Skoda Kushaq",
+            vehicleNumber: "KA09 MH1740",
+            vehicleCategory: VehicleCategory(
+                id: "someID",
+                name: "Car"
+            )
+        )
+    )))
 }

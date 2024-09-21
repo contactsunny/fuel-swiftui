@@ -17,14 +17,10 @@ struct FuelRecordsView: View {
     @State var shouldRefreshList = false
     
     var body: some View {
-        if showProgressView {
-            ProgressView()
-                .task {
-                    fuelRecords = await fuelService.getFuelRecords()!
-                    showProgressView = false
-                    shouldRefreshList = false
-                }
-        } else {
+        ZStack {
+            if showProgressView {
+                ProgressView().zIndex(1)
+            }
             NavigationStack {
                 List {
                     ForEach($fuelRecords) {
@@ -47,17 +43,23 @@ struct FuelRecordsView: View {
                     }
                 }
             }
+            .disabled(showProgressView)
+            .task {
+                fuelRecords = await fuelService.getFuelRecords()!
+                showProgressView = false
+                shouldRefreshList = false
+            }
             .refreshable {
                 Task {
                     fuelRecords = await fuelService.getFuelRecords()!
                 }
             }
             .sheet(isPresented: $showAddFuelSheet,
-                    onDismiss: {
+                   onDismiss: {
                 showAddFuelSheet = false
             }) {
                 NavigationStack {
-                    FuelRecordForm(shouldRefreshList: $shouldRefreshList, formType: "add")
+                    FuelRecordForm(shouldRefreshList: $shouldRefreshList)
                         .navigationTitle("Add Fuel Log")
                 }.onDisappear() {
                     Task {

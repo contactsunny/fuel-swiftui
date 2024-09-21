@@ -41,10 +41,23 @@ class FuelService {
         return fuelRecords
     }
     
-    func postFuelRecord(fuel: FuelRequest) async -> Fuel? {
+    func saveFuelRecord(fuel: FuelRequest) async -> Fuel? {
         do {
             let jsonData = try JSONEncoder().encode(fuel)
             let data = await self.httpUtil.makePostCall(endpoint: "fuel", data: jsonData)
+            let decoder = JSONDecoder()
+            let fuelResponse = try decoder.decode(FuelPostApiResponse.self, from: data!)
+            return fuelResponse.data
+        } catch let error {
+            print(error)
+        }
+        return nil
+    }
+    
+    func updateFuelRecord(fuel: FuelRequest) async -> Fuel? {
+        do {
+            let jsonData = try JSONEncoder().encode(fuel)
+            let data = await self.httpUtil.makePutCall(endpoint: "fuel/\(fuel.id ?? "")", data: jsonData)
             let decoder = JSONDecoder()
             let fuelResponse = try decoder.decode(FuelPostApiResponse.self, from: data!)
             return fuelResponse.data

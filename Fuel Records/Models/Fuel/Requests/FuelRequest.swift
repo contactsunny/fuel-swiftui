@@ -9,6 +9,8 @@ import Foundation
 
 class FuelRequest: Codable {
     
+    let id: String?
+    let userId: String?
     let date: String
     let fuelType: String
     let litres: Double
@@ -26,9 +28,11 @@ class FuelRequest: Codable {
         try container.encode(self.paymentType, forKey: .paymentType)
         try container.encode(self.amount, forKey: .amount)
         try container.encode(self.vehicleId, forKey: .vehicleId)
+        try container.encodeIfPresent(self.id, forKey: .id)
+        try container.encodeIfPresent(self.userId, forKey: .userId)
     }
     
-    internal init(date: String, fuelType: String, litres: Double, costPerLitre: Double, paymentType: String, amount: Double, vehicleId: String) {
+    internal init(id: String?, userId: String?, date: String, fuelType: String, litres: Double, costPerLitre: Double, paymentType: String, amount: Double, vehicleId: String) {
         self.date = date
         self.fuelType = fuelType
         self.litres = litres
@@ -36,5 +40,7 @@ class FuelRequest: Codable {
         self.paymentType = paymentType
         self.amount = amount
         self.vehicleId = vehicleId
+        self.id = id
+        self.userId = userId
     }
 }
