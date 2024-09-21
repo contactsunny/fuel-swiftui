@@ -16,6 +16,9 @@ struct FuelRecordsView: View {
     @State var showProgressView = true
     @State var shouldRefreshList = false
     
+    @State var totalFuelVolume: Double = 0.0
+    @State var totalFuelCost: Double = 0.0
+    
     var body: some View {
         ZStack {
             if showProgressView {
@@ -23,6 +26,18 @@ struct FuelRecordsView: View {
             }
             NavigationStack {
                 List {
+                    Section(header: Text("Quick Analytics")) {
+                        HStack {
+                            Text("Total Spend")
+                            Spacer()
+                            Text("Rs. \(totalFuelCost, specifier: "%.2f")")
+                        }
+                        HStack {
+                            Text("Total Fuel Volume")
+                            Spacer()
+                            Text("\(totalFuelVolume, specifier: "%.2f") L")
+                        }
+                    }
                     ForEach($fuelRecords) {
                         record in
                         FuelRecordRowView(fuel: record)
@@ -46,6 +61,12 @@ struct FuelRecordsView: View {
             .disabled(showProgressView)
             .task {
                 fuelRecords = await fuelService.getFuelRecords()!
+                
+                for record in fuelRecords {
+                    totalFuelCost = totalFuelCost + record.amount
+                    totalFuelVolume = totalFuelVolume + record.litres
+                }
+                
                 showProgressView = false
                 shouldRefreshList = false
             }
