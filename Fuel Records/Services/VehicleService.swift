@@ -37,4 +37,30 @@ class VehicleService {
         
         return vehicles
     }
+    
+    func saveVehicle(vehicle: VehicleRequest) async -> Vehicle? {
+        do {
+            let jsonData = try JSONEncoder().encode(vehicle)
+            let data = await self.httpUtil.makePostCall(endpoint: "vehicle", data: jsonData)
+            let decoder = JSONDecoder()
+            let vehicleResponse = try decoder.decode(VehiclePostApiResponse.self, from: data!)
+            return vehicleResponse.data
+        } catch let error {
+            print(error)
+        }
+        return nil
+    }
+    
+    func updateVehicle(vehicle: VehicleRequest) async -> Vehicle? {
+        do {
+            let jsonData = try JSONEncoder().encode(vehicle)
+            let data = await self.httpUtil.makePutCall(endpoint: "vehicle/\(vehicle.id ?? "")", data: jsonData)
+            let decoder = JSONDecoder()
+            let vehicleResponse = try decoder.decode(VehiclePostApiResponse.self, from: data!)
+            return vehicleResponse.data
+        } catch let error {
+            print(error)
+        }
+        return nil
+    }
 }

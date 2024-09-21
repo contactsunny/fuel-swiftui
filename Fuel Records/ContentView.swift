@@ -17,6 +17,11 @@ struct ContentView: View {
                 Image(systemName: "fuelpump")
                 Text("Fuel Logs")
             }.tag(0)
+            
+            SettingsView().tabItem {
+                Image(systemName: "gear")
+                Text("Settings")
+            }.tag(1)
         }
     }
 }
