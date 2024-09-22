@@ -1,23 +1,18 @@
 //
-//  EditVehicleView.swift
+//  EditCategoryForm.swift
 //  Fuel Records
 //
-//  Created by Sunny Srinidhi on 21/09/24.
+//  Created by Sunny Srinidhi on 23/09/24.
 //
 
 import SwiftUI
 
-struct EditVehicleView: View {
+struct EditCategoryForm: View {
     @Environment(\.dismiss) private var dismiss
     
     //    Services
-    let vehicleService = VehicleService()
     let vehicleCategoryService = VehicleCategoryService()
     
-    //    Data
-    @State var vehicleCategories: [VehicleCategory] = []
-    
-    //    UI Controlling Variables
     @State var showProgressView = true
     @State var showErrorAlert: Bool = false
     @State var shouldDismissSheet: Bool = false
@@ -26,19 +21,14 @@ struct EditVehicleView: View {
     
     //    Form controls
     @State var name: String = ""
-    @State var registrationNumber: String = ""
-    @State var vehicleCategoryId: String = ""
     
-    @Binding var vehicle: Vehicle
+    @Binding var category: VehicleCategory
     
     var body: some View {
         if showProgressView {
             ProgressView()
                 .task {
-                    vehicleCategories = await vehicleCategoryService.getVehicleCategories()!
-                    vehicleCategoryId = vehicle.vehicleCategoryId
-                    name = vehicle.name
-                    registrationNumber = vehicle.vehicleNumber
+                    name = category.name
                     showProgressView = false
                 }
         } else {
@@ -48,24 +38,13 @@ struct EditVehicleView: View {
                 }
                 NavigationStack {
                     Form {
-                        Section {
-                            Picker("Vehicle Category", selection: $vehicleCategoryId) {
-                                ForEach(vehicleCategories) { category in
-                                    Text(category.name).tag(category.id)
-                                }
-                            }
-                        }
                         Section(header: Text("Name")) {
                             TextField("Required", text: $name)
                                 .textInputAutocapitalization(.words)
                         }
-                        Section(header: Text("Registration Number")) {
-                            TextField("Required", text: $registrationNumber)
-                                .textInputAutocapitalization(.characters)
-                        }
                     }
                     .disabled(showApiCallProgressView)
-                    .navigationTitle("Update Vehicle Category")
+                    .navigationTitle("Add Vehicle Category")
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
                             XMarkButton().onTapGesture { // on tap gesture calls dismissal
@@ -77,7 +56,7 @@ struct EditVehicleView: View {
                             Button("Save") {
                                 Task {
                                     showApiCallProgressView = true
-                                    await updateVehicle()
+                                    await updateVehicleCategory()
                                     if shouldDismissSheet {
                                         showApiCallProgressView = false
                                         shouldDismissSheet = false
@@ -100,44 +79,33 @@ struct EditVehicleView: View {
         }
     }
     
-    func updateVehicle() async {
-        guard !name.isEmpty, !registrationNumber.isEmpty
+    func updateVehicleCategory() async {
+        guard !name.isEmpty
         else {
             alertMessage = "Please fill in all fields"
             showErrorAlert = true
             return
         }
         
-        let vehicleRequest = VehicleRequest(
-            id: vehicle.id,
+        let updatedCategory = VehicleCategoryRequest(
+            id: self.category.id,
             userId: nil,
-            name: name,
-            vehicleNumber: registrationNumber,
-            vehicleCategoryId: vehicleCategoryId
+            name: name
         )
-        vehicle = await vehicleService.updateVehicle(vehicle: vehicleRequest)!
-        
-        for vehicleCategory in vehicleCategories {
-            if vehicle.vehicleCategoryId == vehicleCategory.id {
-                vehicle.vehicleCategory = vehicleCategory
-            }
-        }
+        category = await vehicleCategoryService.updateVehicleCategory(
+            category: updatedCategory
+        )!
         
         shouldDismissSheet = true
     }
 }
 
 #Preview {
-    EditVehicleView(
-        vehicle: .constant(
-            Vehicle(
-                id: "someID",
-                name: "Vehicle Name",
-                vehicleNumber: "KA09 MH1740",
-                vehicleCategory: VehicleCategory(
-                    id: "someID",
-                    name: "Car"
-                )
+    EditCategoryForm(
+        category: .constant(
+            VehicleCategory(
+                id: "1",
+                name: "Car"
             )
         )
     )

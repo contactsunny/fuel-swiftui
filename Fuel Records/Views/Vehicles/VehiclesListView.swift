@@ -10,11 +10,14 @@ import SwiftUI
 struct VehiclesListView: View {
     
     @State var vehicles: [Vehicle] = []
-    @State var showAddFuelSheet: Bool = false
     @State var showProgressView = true
     @State var shouldRefreshList = false
     @State var showAddVehicleSheet = false
     @State var showDeleteAlert: Bool = false
+    
+    @State var searchTerm = ""
+    @State var categoryFilter: String = "all"
+    @State var vehicleCategories: [VehicleCategory] = []
     
     @State var deleteIndexSet: IndexSet = []
     
@@ -27,9 +30,28 @@ struct VehiclesListView: View {
                 ProgressView().zIndex(1)
             }
             List {
+                Section {
+                    Picker("Category", selection: $categoryFilter) {
+                        Text("All").tag("all")
+                        ForEach(vehicleCategories) { category in
+                            Text(category.name).tag(category.id)
+                        }
+                    }
+//                    .frame(maxWidth: .infinity)
+//                    .padding(.bottom, 30)
+//                    .pickerStyle(SegmentedPickerStyle())
+                }
                 ForEach($vehicles) {
                     vehicle in
-                    VehicleRowView(vehicle: vehicle)
+                    if searchTerm.isEmpty ||
+                        vehicle.wrappedValue.name.lowercased().contains(searchTerm.lowercased()) ||
+                        vehicle.wrappedValue.vehicleNumber.lowercased().contains(searchTerm.lowercased()) {
+                        if (categoryFilter != "all" &&
+                            vehicle.wrappedValue.vehicleCategoryId.lowercased() == categoryFilter.lowercased()) || categoryFilter == "all"
+                        {
+                        VehicleRowView(vehicle: vehicle)
+                        }
+                    }
                 }
                 .onDelete(perform: { indexSet in
                     deleteIndexSet = indexSet
@@ -47,19 +69,18 @@ struct VehiclesListView: View {
                 }
             }
             .navigationTitle(Text("Vehicles"))
-            .disabled(showProgressView)
+//            .disabled(showProgressView)
             .task {
-                showProgressView = true
-                vehicles = await vehicleService.getVehicles()!
-                showProgressView = false
+                await refreshList()
                 shouldRefreshList = false
             }
             .refreshable {
                 Task {
-                    showProgressView = true
-                    vehicles = await vehicleService.getVehicles()!
-                    showProgressView = false
+                    await refreshList()
                 }
+            }
+            .searchable(text: $searchTerm) {
+                
             }
             .sheet(isPresented: $showAddVehicleSheet,
                    onDismiss: {
@@ -71,9 +92,7 @@ struct VehiclesListView: View {
                 }.onDisappear() {
                     Task {
                         if shouldRefreshList {
-                            showProgressView = true
-                            vehicles = await vehicleService.getVehicles()!
-                            showProgressView = false
+                            await refreshList()
                             shouldRefreshList = false
                         }
                     }
@@ -92,11 +111,30 @@ struct VehiclesListView: View {
         }
     }
     
+    func refreshList() async {
+        Task {
+            showProgressView = true
+            vehicles = await vehicleService.getVehicles()!
+            vehicleCategories = []
+            for vehicle in vehicles {
+//                for vehicleCategory in vehicleCategories {
+//                    if vehicleCategory.id == vehicle.vehicleCategory!.id {
+//                        continue
+//                    }
+                    if !vehicleCategories.contains(where: { $0.id == vehicle.vehicleCategory!.id }) {
+                        vehicleCategories.append(vehicle.vehicleCategory!)
+                    }
+                    
+//                }
+            }
+            showProgressView = false
+        }
+    }
+    
     func delete() async {
         Task {
             for index in self.deleteIndexSet {
                 let vehicle = vehicles[index]
-                print("Deleteing \(vehicle.id) \(vehicle.name)")
                 await vehicleService.deleteVehicle(id: vehicle.id)
                 showProgressView = true
                 vehicles = await vehicleService.getVehicles()!

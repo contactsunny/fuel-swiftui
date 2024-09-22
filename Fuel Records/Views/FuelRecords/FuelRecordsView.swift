@@ -15,7 +15,7 @@ struct FuelRecordsView: View {
     @State var fuelRecords: [Fuel]
     var fuelService = FuelService()
     @State var showAddFuelSheet: Bool = false
-    @State var showProgressView = true
+    @State var showProgressView = false
     @State var shouldRefreshList = false
     @State var showDeleteAlert: Bool = false
     
@@ -105,23 +105,14 @@ struct FuelRecordsView: View {
                     }
                 }
             }
-            .disabled(showProgressView)
+//            .disabled(showProgressView)
             .task {
-                fuelRecords = await fuelService.getFuelRecords()!
-                
-                for record in fuelRecords {
-                    totalFuelCost = totalFuelCost + record.amount
-                    totalFuelVolume = totalFuelVolume + record.litres
-                }
-                
-                showProgressView = false
+                await refreshList()
                 shouldRefreshList = false
             }
             .refreshable {
                 Task {
-                    showProgressView = true
-                    fuelRecords = await fuelService.getFuelRecords()!
-                    showProgressView = false
+                    await refreshList()
                 }
             }
             .sheet(isPresented: $showAddFuelSheet,
@@ -145,9 +136,7 @@ struct FuelRecordsView: View {
             }
             .onChange(of: shouldRefreshList) {
                 Task {
-                    showProgressView = true
-                    fuelRecords = await fuelService.getFuelRecords()!
-                    showProgressView = false
+                    await refreshList()
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
@@ -155,6 +144,22 @@ struct FuelRecordsView: View {
                 print("Orientation changed: \(orientation)")
             }
             .environment(\.horizontalSizeClass, orientation == .portrait ? .compact : .regular)
+        }
+    }
+    
+    func refreshList() async {
+        Task {
+            showProgressView = true
+            fuelRecords = await fuelService.getFuelRecords()!
+            
+            totalFuelCost = 0.0
+            totalFuelVolume = 0.0
+            for record in fuelRecords {
+                totalFuelCost = totalFuelCost + record.amount
+                totalFuelVolume = totalFuelVolume + record.litres
+            }
+            
+            showProgressView = false
         }
     }
     
