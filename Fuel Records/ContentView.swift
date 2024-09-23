@@ -18,10 +18,15 @@ struct ContentView: View {
                 Text("Fuel Logs")
             }.tag(0)
             
+            AnalyticsView().tabItem {
+                Image(systemName: "chart.xyaxis.line")
+                Text("Reports")
+            }.tag(1)
+            
             SettingsView().tabItem {
                 Image(systemName: "gear")
                 Text("Settings")
-            }.tag(1)
+            }.tag(2)
         }
     }
 }
