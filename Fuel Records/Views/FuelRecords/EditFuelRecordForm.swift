@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct EditFuelRecordForm: View {
-    
     @Environment(\.dismiss) private var dismiss
     
     //    Services
@@ -118,7 +117,7 @@ struct EditFuelRecordForm: View {
                     }
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Save") {
+                        Button("Done") {
                             Task {
                                 showApiCallProgressView = true
                                 await saveFuelLog()

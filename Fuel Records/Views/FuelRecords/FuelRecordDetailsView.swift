@@ -99,8 +99,10 @@ struct FuelRecordDetailsView: View {
                     }
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Edit") {
+                        Button {
                             showEditFuelSheet = true
+                        } label: {
+                            Image(systemName: "pencil")
                         }
                     }
                 }

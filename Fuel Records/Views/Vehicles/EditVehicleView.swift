@@ -75,7 +75,7 @@ struct EditVehicleView: View {
                         }
                         
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("Save") {
+                            Button("Done") {
                                 Task {
                                     showApiCallProgressView = true
                                     await updateVehicle()

@@ -45,7 +45,7 @@ struct AddCategoryForm: View {
                     }
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Save") {
+                        Button("Done") {
                             Task {
                                 showApiCallProgressView = true
                                 await saveVehicleCategory()

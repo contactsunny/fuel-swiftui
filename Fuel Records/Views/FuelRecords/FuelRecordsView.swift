@@ -24,7 +24,14 @@ struct FuelRecordsView: View {
     @State var deleteIndexSet: IndexSet = []
     
     @State var vehicles: [Vehicle] = []
-    @State var selectedVehicleId: String = "all"
+    @State var vehicleCategories: [VehicleCategory] = []
+    @State var fuelTypes: [String] = []
+    @State var paymentMethods: [String] = []
+    
+//    Filter vars
+    @State var showFilterSection: Bool = false
+    @State var filterCriteria = FuelFilterCriteria()
+    
     
     var body: some View {
         ZStack {
@@ -35,14 +42,6 @@ struct FuelRecordsView: View {
                 if (orientation == .landscapeLeft || orientation == .landscapeRight) && horizontalSizeClass == .regular {
                     NavigationView {
                         List {
-                            Section {
-                                Picker("Select Vehicle", selection: $selectedVehicleId) {
-                                    Text("All").tag("all")
-                                    ForEach(vehicles) { vehicle in
-                                        Text(vehicle.name).tag(vehicle.id)
-                                    }
-                                }
-                            }
                             Section(header: Text("Quick Analytics")) {
                                 HStack {
                                     Text("Total Spend")
@@ -57,8 +56,8 @@ struct FuelRecordsView: View {
                             }
                             ForEach($fuelRecords) {
                                 record in
-                                if (selectedVehicleId != "all" &&
-                                    record.wrappedValue.vehicleId.lowercased() == selectedVehicleId.lowercased()) || selectedVehicleId == "all"
+                                if (filterCriteria.vehicleId != "all" &&
+                                    record.wrappedValue.vehicleId.lowercased() == filterCriteria.vehicleId.lowercased()) || filterCriteria.vehicleId == "all"
                                 {
                                 FuelRecordRowView(fuel: record, shouldRefreshList: $shouldRefreshList)
                                 }
@@ -84,14 +83,6 @@ struct FuelRecordsView: View {
                 } else {
                     NavigationStack {
                         List {
-                            Section {
-                                Picker("Select Vehicle", selection: $selectedVehicleId) {
-                                    Text("All").tag("all")
-                                    ForEach(vehicles) { vehicle in
-                                        Text(vehicle.name).tag(vehicle.id)
-                                    }
-                                }
-                            }
                             Section(header: Text("Quick Analytics")) {
                                 HStack {
                                     Text("Total Spend")
@@ -106,8 +97,7 @@ struct FuelRecordsView: View {
                             }
                             ForEach($fuelRecords) {
                                 record in
-                                if (selectedVehicleId != "all" &&
-                                    record.wrappedValue.vehicleId.lowercased() == selectedVehicleId.lowercased()) || selectedVehicleId == "all"
+                                if recordInFilter(record: record.wrappedValue)
                                 {
                                 FuelRecordRowView(fuel: record, shouldRefreshList: $shouldRefreshList)
                                 }
@@ -124,8 +114,18 @@ struct FuelRecordsView: View {
                             }
                             
                             ToolbarItem(placement: .navigationBarTrailing) {
-                                Button("Add") {
+                                Button {
+                                    showFilterSection.toggle()
+                                } label: {
+                                    Image(systemName: "magnifyingglass")
+                                }
+                            }
+                            
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button {
                                     showAddFuelSheet = true
+                                } label: {
+                                    Image(systemName: "plus")
                                 }
                             }
                         }
@@ -151,6 +151,21 @@ struct FuelRecordsView: View {
                         .navigationTitle("Add Fuel Log")
                 }
             }
+            .sheet(isPresented: $showFilterSection,
+                   onDismiss: {
+                showFilterSection = false
+            }) {
+                NavigationStack {
+                    FuelListFilterView(
+                        showFilterSection: $showFilterSection,
+                        vehicles: $vehicles,
+                        vehicleCategories: $vehicleCategories,
+                        fuelTypes: $fuelTypes,
+                        paymentMethods: $paymentMethods,
+                        criteria: $filterCriteria
+                    ).navigationTitle("Filter Fuel Logs")
+                }
+            }
             .alert(isPresented: $showDeleteAlert) {
                 Alert(title: Text("Are you sure?"),
                       primaryButton: .cancel(),
@@ -174,6 +189,23 @@ struct FuelRecordsView: View {
         }
     }
     
+    func recordInFilter(record: Fuel) -> Bool {
+        var shouldShow = false
+        if filterCriteria.vehicleId == "all" || record.vehicleId.lowercased() == filterCriteria.vehicleId.lowercased() {
+            if Date(timeIntervalSince1970: record.date/1000) >= filterCriteria.startDate && Date(timeIntervalSince1970: record.date/1000) <= filterCriteria.endDate {
+                if filterCriteria.vehicleCategoryId == "all" || record.vehicle?.vehicleCategoryId.lowercased() == filterCriteria.vehicleCategoryId.lowercased() {
+                    if filterCriteria.fuelType == "all" || filterCriteria.fuelType.lowercased() == record.fuelType.lowercased() {
+                        if filterCriteria.paymentType == "all" || filterCriteria.paymentType.lowercased() == record.paymentType.lowercased() {
+                            shouldShow = true
+                        }
+                    }
+                }
+            }
+        }
+        
+        return shouldShow
+    }
+    
     func refreshList() async {
         Task {
             showProgressView = true
@@ -186,10 +218,24 @@ struct FuelRecordsView: View {
                 totalFuelCost = totalFuelCost + record.amount
                 totalFuelVolume = totalFuelVolume + record.litres
                 
+                if !fuelTypes.contains(record.fuelType) {
+                    fuelTypes.append(record.fuelType)
+                }
+                
+                if !paymentMethods.contains(record.paymentType) {
+                    paymentMethods.append(record.paymentType)
+                }
+                
                 guard record.vehicle != nil else { continue }
                 let vehicle = record.vehicle!
                 if !vehicles.contains(where: { $0.id == vehicle.id }) {
                     vehicles.append(vehicle)
+                }
+                
+                guard record.vehicle!.vehicleCategory != nil else { continue }
+                let category = record.vehicle!.vehicleCategory!
+                if !vehicleCategories.contains(where: { $0.id == category.id }) {
+                    vehicleCategories.append(category)
                 }
             }
             

@@ -52,8 +52,10 @@ struct VehicleDetailsView: View {
                             }
                             
                             ToolbarItem(placement: .navigationBarTrailing) {
-                                Button("Edit") {
+                                Button {
                                     showEditVehicleSheet = true
+                                } label: {
+                                    Image(systemName: "pencil")
                                 }
                             }
                         }

@@ -42,8 +42,10 @@ struct VehicleCategoryListView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Add") {
+                    Button {
                         showAddVehicleCategorySheet = true
+                    } label: {
+                        Image(systemName: "plus")
                     }
                 }
             }
