@@ -13,6 +13,7 @@ struct FuelRecordsView: View {
     @State private var orientation = UIDevice.current.orientation
     
     @State var fuelRecords: [Fuel]
+    @State var filteredRecords: [Fuel] = []
     var fuelService = FuelService()
     @State var showAddFuelSheet: Bool = false
     @State var showProgressView = false
@@ -54,13 +55,9 @@ struct FuelRecordsView: View {
                                     Text("\(totalFuelVolume, specifier: "%.2f") L")
                                 }
                             }
-                            ForEach($fuelRecords) {
+                            ForEach($filteredRecords) {
                                 record in
-                                if (filterCriteria.vehicleId != "all" &&
-                                    record.wrappedValue.vehicleId.lowercased() == filterCriteria.vehicleId.lowercased()) || filterCriteria.vehicleId == "all"
-                                {
                                 FuelRecordRowView(fuel: record, shouldRefreshList: $shouldRefreshList)
-                                }
                             }
                             .onDelete(perform: { indexSet in
                                 deleteIndexSet = indexSet
@@ -95,12 +92,12 @@ struct FuelRecordsView: View {
                                     Text("\(totalFuelVolume, specifier: "%.2f") L")
                                 }
                             }
-                            ForEach($fuelRecords) {
+                            ForEach($filteredRecords) {
                                 record in
-                                if recordInFilter(record: record.wrappedValue)
-                                {
+//                                if recordInFilter(record: record.wrappedValue)
+//                                {
                                 FuelRecordRowView(fuel: record, shouldRefreshList: $shouldRefreshList)
-                                }
+//                                }
                             }
                             .onDelete(perform: { indexSet in
                                 deleteIndexSet = indexSet
@@ -157,6 +154,7 @@ struct FuelRecordsView: View {
             }) {
                 NavigationStack {
                     FuelListFilterView(
+                        shouldRefreshList: .constant(true),
                         showFilterSection: $showFilterSection,
                         vehicles: $vehicles,
                         vehicleCategories: $vehicleCategories,
@@ -164,6 +162,11 @@ struct FuelRecordsView: View {
                         paymentMethods: $paymentMethods,
                         criteria: $filterCriteria
                     ).navigationTitle("Filter Fuel Logs")
+                }.onDisappear() {
+                    Task {
+                        print("On Disappear")
+                        await refreshList()
+                    }
                 }
             }
             .alert(isPresented: $showDeleteAlert) {
@@ -209,14 +212,22 @@ struct FuelRecordsView: View {
     func refreshList() async {
         Task {
             showProgressView = true
-            fuelRecords = await fuelService.getFuelRecords()!
+            fuelRecords = await fuelService.getFuelRecords(
+                fromDate: filterCriteria.startDate, toDate: filterCriteria.endDate
+            )!
             
             totalFuelCost = 0.0
             totalFuelVolume = 0.0
             vehicles = []
+            vehicleCategories = []
+            filteredRecords = []
+            
             for record in fuelRecords {
-                totalFuelCost = totalFuelCost + record.amount
-                totalFuelVolume = totalFuelVolume + record.litres
+                if recordInFilter(record: record) {
+                    filteredRecords.append(record)
+                    totalFuelCost = totalFuelCost + record.amount
+                    totalFuelVolume = totalFuelVolume + record.litres
+                }
                 
                 if !fuelTypes.contains(record.fuelType) {
                     fuelTypes.append(record.fuelType)
@@ -249,9 +260,7 @@ struct FuelRecordsView: View {
                 let fuel = fuelRecords[index]
                 print("Deleteing \(fuel.id) \(fuel.amount)")
                 await fuelService.deleteFuelRecord(id: fuel.id)
-                showProgressView = true
-                fuelRecords = await fuelService.getFuelRecords()!
-                showProgressView = false
+                await refreshList()
             }
         }
     }

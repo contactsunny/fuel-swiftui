@@ -10,6 +10,7 @@ import SwiftUI
 struct FuelListFilterView: View {
     @Environment(\.dismiss) private var dismiss
     
+    @Binding var shouldRefreshList: Bool
     @Binding var showFilterSection: Bool
     @Binding var vehicles: [Vehicle]
     @Binding var vehicleCategories: [VehicleCategory]
@@ -80,6 +81,7 @@ struct FuelListFilterView: View {
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Done") {
+                            shouldRefreshList = true
                             dismiss()
                         }
                     }
@@ -120,6 +122,7 @@ struct FuelFilterCriteria {
     var vehicleCategories: [VehicleCategory] = []
     
     FuelListFilterView(
+        shouldRefreshList: .constant(true),
         showFilterSection: .constant(true),
         vehicles: .constant(vehicles),
         vehicleCategories: .constant(vehicleCategories),

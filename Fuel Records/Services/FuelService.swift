@@ -14,9 +14,12 @@ class FuelService {
     private var httpUtil: HttpUtil = HttpUtil()
     private let vehicleService = VehicleService()
     
-    func getFuelRecords() async -> [Fuel]? {
-        let startDateString = CustomUtil.getFormattedDateString(date: CustomUtil.addOrSubtractMonth(month: -6), startTime: true)
-        let endDateString = CustomUtil.getFormattedDateString(date: CustomUtil.addOrSubtractDay(day: 1), startTime: false)
+    func getFuelRecords(fromDate: Date?, toDate: Date?) async -> [Fuel]? {
+        let startDate = fromDate != nil ? fromDate : CustomUtil.addOrSubtractMonth(month: -6)
+        let endDate = toDate != nil ? toDate : CustomUtil.addOrSubtractDay(day: 1)
+            
+        let startDateString = CustomUtil.getFormattedDateString(date: startDate!, startTime: true)
+        let endDateString = CustomUtil.getFormattedDateString(date: endDate!, startTime: false)
         
         var fuelRecords: [Fuel]?
         let data = await self.httpUtil.makeGetCall(endpoint: "fuel?startDate=\(startDateString)&endDate=\(endDateString)")
