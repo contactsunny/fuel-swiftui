@@ -36,6 +36,7 @@ struct EditVehicleView: View {
             ProgressView()
                 .task {
                     vehicleCategories = await vehicleCategoryService.getVehicleCategories()!
+                    vehicleCategories.append(VehicleCategory(id: "unknown", name: "Unknown"))
                     vehicleCategoryId = vehicle.vehicleCategoryId
                     name = vehicle.name
                     registrationNumber = vehicle.vehicleNumber
@@ -65,7 +66,7 @@ struct EditVehicleView: View {
                         }
                     }
                     .disabled(showApiCallProgressView)
-                    .navigationTitle("Update Vehicle Category")
+                    .navigationTitle("Update Vehicle")
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
                             XMarkButton().onTapGesture { // on tap gesture calls dismissal
@@ -104,6 +105,13 @@ struct EditVehicleView: View {
         guard !name.isEmpty, !registrationNumber.isEmpty
         else {
             alertMessage = "Please fill in all fields"
+            showErrorAlert = true
+            return
+        }
+        
+        guard vehicleCategoryId != "unknown"
+        else {
+            alertMessage = "Please select a valid vehicle category"
             showErrorAlert = true
             return
         }

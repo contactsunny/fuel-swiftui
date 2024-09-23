@@ -15,7 +15,7 @@ class FuelService {
     private let vehicleService = VehicleService()
     
     func getFuelRecords() async -> [Fuel]? {
-        let startDateString = CustomUtil.getFormattedDateString(date: CustomUtil.addOrSubtractMonth(month: -3), startTime: true)
+        let startDateString = CustomUtil.getFormattedDateString(date: CustomUtil.addOrSubtractMonth(month: -6), startTime: true)
         let endDateString = CustomUtil.getFormattedDateString(date: CustomUtil.addOrSubtractDay(day: 1), startTime: false)
         
         var fuelRecords: [Fuel]?

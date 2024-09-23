@@ -44,7 +44,7 @@ struct EditCategoryForm: View {
                         }
                     }
                     .disabled(showApiCallProgressView)
-                    .navigationTitle("Edit Vehicle Category")
+                    .navigationTitle("Update Vehicle Category")
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
                             XMarkButton().onTapGesture { // on tap gesture calls dismissal

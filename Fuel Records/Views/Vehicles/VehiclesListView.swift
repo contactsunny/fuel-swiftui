@@ -37,9 +37,6 @@ struct VehiclesListView: View {
                             Text(category.name).tag(category.id)
                         }
                     }
-//                    .frame(maxWidth: .infinity)
-//                    .padding(.bottom, 30)
-//                    .pickerStyle(SegmentedPickerStyle())
                 }
                 ForEach($vehicles) {
                     vehicle in
@@ -117,15 +114,9 @@ struct VehiclesListView: View {
             vehicles = await vehicleService.getVehicles()!
             vehicleCategories = []
             for vehicle in vehicles {
-//                for vehicleCategory in vehicleCategories {
-//                    if vehicleCategory.id == vehicle.vehicleCategory!.id {
-//                        continue
-//                    }
-                    if !vehicleCategories.contains(where: { $0.id == vehicle.vehicleCategory!.id }) {
-                        vehicleCategories.append(vehicle.vehicleCategory!)
-                    }
-                    
-//                }
+                if !vehicleCategories.contains(where: { $0.id == vehicle.vehicleCategory!.id }) {
+                    vehicleCategories.append(vehicle.vehicleCategory!)
+                }
             }
             showProgressView = false
         }

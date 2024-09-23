@@ -23,6 +23,9 @@ struct FuelRecordsView: View {
     @State var totalFuelCost: Double = 0.0
     @State var deleteIndexSet: IndexSet = []
     
+    @State var vehicles: [Vehicle] = []
+    @State var selectedVehicleId: String = "all"
+    
     var body: some View {
         ZStack {
             if showProgressView {
@@ -32,6 +35,14 @@ struct FuelRecordsView: View {
                 if (orientation == .landscapeLeft || orientation == .landscapeRight) && horizontalSizeClass == .regular {
                     NavigationView {
                         List {
+                            Section {
+                                Picker("Select Vehicle", selection: $selectedVehicleId) {
+                                    Text("All").tag("all")
+                                    ForEach(vehicles) { vehicle in
+                                        Text(vehicle.name).tag(vehicle.id)
+                                    }
+                                }
+                            }
                             Section(header: Text("Quick Analytics")) {
                                 HStack {
                                     Text("Total Spend")
@@ -46,7 +57,11 @@ struct FuelRecordsView: View {
                             }
                             ForEach($fuelRecords) {
                                 record in
+                                if (selectedVehicleId != "all" &&
+                                    record.wrappedValue.vehicleId.lowercased() == selectedVehicleId.lowercased()) || selectedVehicleId == "all"
+                                {
                                 FuelRecordRowView(fuel: record, shouldRefreshList: $shouldRefreshList)
+                                }
                             }
                             .onDelete(perform: { indexSet in
                                 deleteIndexSet = indexSet
@@ -69,6 +84,14 @@ struct FuelRecordsView: View {
                 } else {
                     NavigationStack {
                         List {
+                            Section {
+                                Picker("Select Vehicle", selection: $selectedVehicleId) {
+                                    Text("All").tag("all")
+                                    ForEach(vehicles) { vehicle in
+                                        Text(vehicle.name).tag(vehicle.id)
+                                    }
+                                }
+                            }
                             Section(header: Text("Quick Analytics")) {
                                 HStack {
                                     Text("Total Spend")
@@ -83,7 +106,11 @@ struct FuelRecordsView: View {
                             }
                             ForEach($fuelRecords) {
                                 record in
+                                if (selectedVehicleId != "all" &&
+                                    record.wrappedValue.vehicleId.lowercased() == selectedVehicleId.lowercased()) || selectedVehicleId == "all"
+                                {
                                 FuelRecordRowView(fuel: record, shouldRefreshList: $shouldRefreshList)
+                                }
                             }
                             .onDelete(perform: { indexSet in
                                 deleteIndexSet = indexSet
@@ -154,9 +181,16 @@ struct FuelRecordsView: View {
             
             totalFuelCost = 0.0
             totalFuelVolume = 0.0
+            vehicles = []
             for record in fuelRecords {
                 totalFuelCost = totalFuelCost + record.amount
                 totalFuelVolume = totalFuelVolume + record.litres
+                
+                guard record.vehicle != nil else { continue }
+                let vehicle = record.vehicle!
+                if !vehicles.contains(where: { $0.id == vehicle.id }) {
+                    vehicles.append(vehicle)
+                }
             }
             
             showProgressView = false

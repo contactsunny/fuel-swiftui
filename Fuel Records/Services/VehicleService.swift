@@ -23,12 +23,21 @@ class VehicleService {
             let vehicleApiResponse = try decoder.decode(VehicleApiResponse.self, from: data!)
             vehicles = vehicleApiResponse.data
             
+            let unknownCategory = VehicleCategory(id: "unknown", name: "Unknown")
+            
             for vehicle in vehicles! {
+                var selectedCategory: VehicleCategory?
                 for category in vehicleCategories! {
                     if vehicle.vehicleCategoryId == category.id {
-                        vehicle.vehicleCategory = category
+                        selectedCategory = category
                         continue
                     }
+                }
+                if selectedCategory != nil {
+                    vehicle.vehicleCategory = selectedCategory
+                } else {
+                    vehicle.vehicleCategoryId = unknownCategory.id
+                    vehicle.vehicleCategory = unknownCategory
                 }
             }
         } catch let error {
