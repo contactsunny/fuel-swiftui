@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct SettingsView: View {
+    
+    let year = String(Calendar.current.component(.year, from: Date()))
+    
     var body: some View {
         NavigationView {
             List {
@@ -17,6 +20,23 @@ struct SettingsView: View {
                     }
                     NavigationLink(destination: VehicleCategoryListView()) {
                         Text("Vehicle Categories")
+                    }
+                }
+                Section {
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Text("About")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Text("© \(year)")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Text("[Sunny Srinidhi](https://blog.contactsunny.com)")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
                     }
                 }
             }.navigationTitle(Text("Settings"))

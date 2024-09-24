@@ -141,6 +141,8 @@ struct FuelRecordForm: View {
             return
         }
         
+        date = Calendar.current.date(bySettingHour: 10, minute: 30, second: 0, of: date)!
+        
         let fuel = FuelRequest(
             id: nil,
             userId: nil,

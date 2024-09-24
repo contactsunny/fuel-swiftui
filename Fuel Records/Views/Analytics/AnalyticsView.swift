@@ -25,7 +25,7 @@ struct AnalyticsView: View {
                         Text("Spend By Vehicle")
                     }
                     
-                    NavigationLink(destination: Text("Spend By Vehicle Category")) {
+                    NavigationLink(destination: CostByVehicleCategoryAnalyticsView(fuelRecords: $fuelRecords)) {
                         Text("Spend By Vehicle Category")
                     }
                 }
