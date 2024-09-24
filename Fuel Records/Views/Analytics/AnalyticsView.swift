@@ -29,6 +29,16 @@ struct AnalyticsView: View {
                         Text("Spend By Vehicle Category")
                     }
                 }
+                
+                Section(header: Text("Fuel")) {
+                    NavigationLink(destination: SpendByFuelTypeAnalyticsView(fuelRecords: $fuelRecords)) {
+                        Text("Spend By Fuel Type")
+                    }
+                    
+                    NavigationLink(destination: FuelCostTrendAnalyticsView(fuelRecords: $fuelRecords)) {
+                        Text("Fuel Cost Trend")
+                    }
+                }
             }.navigationTitle(Text("Reports"))
         }.task {
             await refreshList()

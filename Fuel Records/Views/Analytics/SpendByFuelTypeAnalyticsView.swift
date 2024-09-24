@@ -1,5 +1,5 @@
 //
-//  CostByVehicleCategoryanalyticsView.swift
+//  SpendByFuelTypeAnalyticsView.swift
 //  Fuel Records
 //
 //  Created by Sunny Srinidhi on 24/09/24.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Charts
 
-struct CostByVehicleCategoryAnalyticsView: View {
+struct SpendByFuelTypeAnalyticsView: View {
     
     @Binding var fuelRecords: [Fuel]
     @State var chartDataList: [ChartData] = []
@@ -58,19 +58,19 @@ struct CostByVehicleCategoryAnalyticsView: View {
             createChartData()
         }
     }
-        
+    
     func createChartData() {
         for record in fuelRecords {
             var chartData: ChartData
             
-            if !chartDataList.contains(where: { $0.id == record.vehicleCategoryId }) {
+            if !chartDataList.contains(where: { $0.id == record.fuelType }) {
                 chartData = ChartData(
-                    id: record.vehicleCategoryId!, name: record.vehicle!.vehicleCategory!.name,
+                    id: record.fuelType, name: CustomUtil.getFormattedString(str: record.fuelType),
                     value: record.amount
                 )
                 chartDataList.append(chartData)
             } else {
-                chartData = getChartDataByVehicleCategory(category: record.vehicle!.vehicleCategory!)
+                chartData = getChartDataByFuelType(fuelType: record.fuelType)
                 chartData.value += record.amount
             }
         }
@@ -78,13 +78,13 @@ struct CostByVehicleCategoryAnalyticsView: View {
         chartDataList = chartDataList.sorted { $0.value > $1.value }
     }
     
-    func getChartDataByVehicleCategory(category: VehicleCategory) -> ChartData {
+    func getChartDataByFuelType(fuelType: String) -> ChartData {
         for data in chartDataList {
-            if data.id == category.id {
+            if data.id == fuelType {
                 return data
             }
         }
-        return ChartData(id: category.id, name: category.name, value: 0.0)
+        return ChartData(id: fuelType, name: CustomUtil.getFormattedString(str: fuelType), value: 0.0)
     }
 }
 
@@ -139,5 +139,5 @@ struct CostByVehicleCategoryAnalyticsView: View {
     
     let fuels: [Fuel] = [fuel1, fuel2]
     
-    CostByVehicleCategoryAnalyticsView(fuelRecords: .constant(fuels))
+    SpendByFuelTypeAnalyticsView(fuelRecords: .constant(fuels))
 }

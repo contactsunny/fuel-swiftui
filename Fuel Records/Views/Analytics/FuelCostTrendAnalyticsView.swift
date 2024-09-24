@@ -1,5 +1,5 @@
 //
-//  CostByVehicleCategoryanalyticsView.swift
+//  FuelCostTrendAnalyticsView.swift
 //  Fuel Records
 //
 //  Created by Sunny Srinidhi on 24/09/24.
@@ -8,10 +8,10 @@
 import SwiftUI
 import Charts
 
-struct CostByVehicleCategoryAnalyticsView: View {
+struct FuelCostTrendAnalyticsView: View {
     
     @Binding var fuelRecords: [Fuel]
-    @State var chartDataList: [ChartData] = []
+    @State var chartDataList: [LineChartData] = []
     @State var viewToShow: String = "chart"
     
     var body: some View {
@@ -23,29 +23,22 @@ struct CostByVehicleCategoryAnalyticsView: View {
                 }.pickerStyle(SegmentedPickerStyle())
                 Spacer()
                 if viewToShow == "chart" {
-                    VStack {
-                        Chart {
-                            ForEach(chartDataList, id: \.id) { data in
-                                SectorMark(
-                                    angle: .value("Sum", data.value)
-                                )
-                                .foregroundStyle(by: .value("Type", data.name))
-                                .annotation(position: .overlay) {
-                                    Text("\(data.value, specifier: "%.2f")")
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                }
-                            }
+//                    VStack {
+                        Chart(chartDataList, id: \.id) {
+                            LineMark(
+                                x: .value("Date", $0.date),
+                                y: .value("Amount", $0.value)
+                            )
+                            .foregroundStyle(by: .value("Type", $0.date))
                         }
-                        //                        .frame(height: 500)
-                    }
+//                    }
                 } else {
                     VStack {
                         List {
                             ForEach($chartDataList, id: \.id) {
                                 data in
                                 HStack {
-                                    Text("\(data.wrappedValue.name)")
+                                    Text("\(data.wrappedValue.date)")
                                     Spacer()
                                     Text("Rs. \(data.wrappedValue.value, specifier: "%.2f")")
                                 }
@@ -58,33 +51,35 @@ struct CostByVehicleCategoryAnalyticsView: View {
             createChartData()
         }
     }
-        
-    func createChartData() {
-        for record in fuelRecords {
-            var chartData: ChartData
-            
-            if !chartDataList.contains(where: { $0.id == record.vehicleCategoryId }) {
-                chartData = ChartData(
-                    id: record.vehicleCategoryId!, name: record.vehicle!.vehicleCategory!.name,
-                    value: record.amount
-                )
-                chartDataList.append(chartData)
-            } else {
-                chartData = getChartDataByVehicleCategory(category: record.vehicle!.vehicleCategory!)
-                chartData.value += record.amount
-            }
-        }
-        
-        chartDataList = chartDataList.sorted { $0.value > $1.value }
-    }
     
-    func getChartDataByVehicleCategory(category: VehicleCategory) -> ChartData {
-        for data in chartDataList {
-            if data.id == category.id {
-                return data
+    func createChartData() {
+        var count = 0
+        for record in fuelRecords {
+            if count >= 10 {
+                break
             }
+            let chartData = LineChartData(
+                id: record.id,
+                date: Date(timeIntervalSince1970: record.date / 1000),
+                value: record.costPerLitre
+            )
+            print("\(chartData.value)")
+            chartDataList.append(chartData)
+            count += 1
         }
-        return ChartData(id: category.id, name: category.name, value: 0.0)
+    }
+}
+
+@Observable
+class LineChartData {
+    let id: String
+    let date: Date
+    var value: Double
+    
+    internal init(id: String, date: Date, value: Double) {
+        self.id = id
+        self.date = date
+        self.value = value
     }
 }
 
@@ -139,5 +134,5 @@ struct CostByVehicleCategoryAnalyticsView: View {
     
     let fuels: [Fuel] = [fuel1, fuel2]
     
-    CostByVehicleCategoryAnalyticsView(fuelRecords: .constant(fuels))
+    FuelCostTrendAnalyticsView(fuelRecords: .constant(fuels))
 }
