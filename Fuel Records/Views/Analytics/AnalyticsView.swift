@@ -21,11 +21,11 @@ struct AnalyticsView: View {
         NavigationView {
             List {
                 Section(header: Text("Vehicles")) {
-                    NavigationLink(destination: CostByVehicleAnalyticsView(fuelRecords: $fuelRecords)) {
+                    NavigationLink(destination: SpendByVehicleAnalyticsView(fuelRecords: $fuelRecords)) {
                         Text("Spend By Vehicle")
                     }
                     
-                    NavigationLink(destination: CostByVehicleCategoryAnalyticsView(fuelRecords: $fuelRecords)) {
+                    NavigationLink(destination: SpendByVehicleCategoryAnalyticsView(fuelRecords: $fuelRecords)) {
                         Text("Spend By Vehicle Category")
                     }
                 }

@@ -15,46 +15,45 @@ struct SpendByFuelTypeAnalyticsView: View {
     @State var viewToShow: String = "chart"
     
     var body: some View {
-        NavigationView {
-            VStack {
-                Picker("", selection: $viewToShow) {
-                    Text("Chart").tag("chart")
-                    Text("List").tag("list")
-                }.pickerStyle(SegmentedPickerStyle())
-                Spacer()
-                if viewToShow == "chart" {
-                    VStack {
-                        Chart {
-                            ForEach(chartDataList, id: \.id) { data in
-                                SectorMark(
-                                    angle: .value("Sum", data.value)
-                                )
-                                .foregroundStyle(by: .value("Type", data.name))
-                                .annotation(position: .overlay) {
-                                    Text("\(data.value, specifier: "%.2f")")
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                }
+        VStack {
+            Picker("", selection: $viewToShow) {
+                Text("Chart").tag("chart")
+                Text("List").tag("list")
+            }.pickerStyle(SegmentedPickerStyle())
+            Spacer()
+            if viewToShow == "chart" {
+                VStack {
+                    Chart {
+                        ForEach(chartDataList, id: \.id) { data in
+                            SectorMark(
+                                angle: .value("Sum", data.value)
+                            )
+                            .foregroundStyle(by: .value("Type", data.name))
+                            .annotation(position: .overlay) {
+                                Text("\(data.value, specifier: "%.2f")")
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
                             }
                         }
-                        //                        .frame(height: 500)
                     }
-                } else {
-                    VStack {
-                        List {
-                            ForEach($chartDataList, id: \.id) {
-                                data in
-                                HStack {
-                                    Text("\(data.wrappedValue.name)")
-                                    Spacer()
-                                    Text("Rs. \(data.wrappedValue.value, specifier: "%.2f")")
-                                }
+                }
+            } else {
+                VStack {
+                    List {
+                        ForEach($chartDataList, id: \.id) {
+                            data in
+                            HStack {
+                                Text("\(data.wrappedValue.name)")
+                                Spacer()
+                                Text("Rs. \(data.wrappedValue.value, specifier: "%.2f")")
                             }
                         }
                     }
                 }
             }
-        }.task {
+        }
+        .navigationTitle("Spend By Fuel Type")
+        .task {
             createChartData()
         }
     }

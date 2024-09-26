@@ -1,60 +1,60 @@
 //
-//  CostByVehicleView.swift
+//  CostByVehicleCategoryanalyticsView.swift
 //  Fuel Records
 //
-//  Created by Sunny Srinidhi on 23/09/24.
+//  Created by Sunny Srinidhi on 24/09/24.
 //
 
 import SwiftUI
 import Charts
 
-struct CostByVehicleAnalyticsView: View {
+struct SpendByVehicleCategoryAnalyticsView: View {
     
     @Binding var fuelRecords: [Fuel]
     @State var chartDataList: [ChartData] = []
     @State var viewToShow: String = "chart"
     
     var body: some View {
-        NavigationView {
-            VStack {
-                Picker("", selection: $viewToShow) {
-                    Text("Chart").tag("chart")
-                    Text("List").tag("list")
-                }.pickerStyle(SegmentedPickerStyle())
-                Spacer()
-                if viewToShow == "chart" {
-                    VStack {
-                        Chart {
-                            ForEach(chartDataList, id: \.id) { data in
-                                SectorMark(
-                                    angle: .value("Sum", data.value)
-                                )
-                                .foregroundStyle(by: .value("Type", data.name))
-                                .annotation(position: .overlay) {
-                                    Text("\(data.value, specifier: "%.2f")")
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                }
+        VStack {
+            Picker("", selection: $viewToShow) {
+                Text("Chart").tag("chart")
+                Text("List").tag("list")
+            }.pickerStyle(SegmentedPickerStyle())
+            Spacer()
+            if viewToShow == "chart" {
+                VStack {
+                    Chart {
+                        ForEach(chartDataList, id: \.id) { data in
+                            SectorMark(
+                                angle: .value("Sum", data.value)
+                            )
+                            .foregroundStyle(by: .value("Type", data.name))
+                            .annotation(position: .overlay) {
+                                Text("\(data.value, specifier: "%.2f")")
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
                             }
                         }
-//                        .frame(height: 500)
                     }
-                } else {
-                    VStack {
-                        List {
-                            ForEach($chartDataList, id: \.id) {
-                                data in
-                                HStack {
-                                    Text("\(data.wrappedValue.name)")
-                                    Spacer()
-                                    Text("Rs. \(data.wrappedValue.value, specifier: "%.2f")")
-                                }
+                    //                        .frame(height: 500)
+                }
+            } else {
+                VStack {
+                    List {
+                        ForEach($chartDataList, id: \.id) {
+                            data in
+                            HStack {
+                                Text("\(data.wrappedValue.name)")
+                                Spacer()
+                                Text("Rs. \(data.wrappedValue.value, specifier: "%.2f")")
                             }
                         }
                     }
                 }
             }
-        }.task {
+        }
+        .navigationTitle("Spend By Vehicle Category")
+        .task {
             createChartData()
         }
     }
@@ -63,14 +63,14 @@ struct CostByVehicleAnalyticsView: View {
         for record in fuelRecords {
             var chartData: ChartData
             
-            if !chartDataList.contains(where: { $0.id == record.vehicleId }) {
+            if !chartDataList.contains(where: { $0.id == record.vehicleCategoryId }) {
                 chartData = ChartData(
-                    id: record.vehicleId, name: record.vehicle?.name ?? "Unknown",
+                    id: record.vehicleCategoryId!, name: record.vehicle!.vehicleCategory!.name,
                     value: record.amount
                 )
                 chartDataList.append(chartData)
             } else {
-                chartData = getChartDataByVehicle(vehicle: record.vehicle!)
+                chartData = getChartDataByVehicleCategory(category: record.vehicle!.vehicleCategory!)
                 chartData.value += record.amount
             }
         }
@@ -78,26 +78,13 @@ struct CostByVehicleAnalyticsView: View {
         chartDataList = chartDataList.sorted { $0.value > $1.value }
     }
     
-    func getChartDataByVehicle(vehicle: Vehicle) -> ChartData {
+    func getChartDataByVehicleCategory(category: VehicleCategory) -> ChartData {
         for data in chartDataList {
-            if data.id == vehicle.id {
+            if data.id == category.id {
                 return data
             }
         }
-        return ChartData(id: vehicle.id, name: vehicle.name, value: 0.0)
-    }
-}
-
-@Observable
-class ChartData {
-    let id: String
-    let name: String
-    var value: Double
-    
-    internal init(id: String, name: String, value: Double) {
-        self.id = id
-        self.name = name
-        self.value = value
+        return ChartData(id: category.id, name: category.name, value: 0.0)
     }
 }
 
@@ -152,5 +139,5 @@ class ChartData {
     
     let fuels: [Fuel] = [fuel1, fuel2]
     
-    CostByVehicleAnalyticsView(fuelRecords: .constant(fuels))
+    SpendByVehicleCategoryAnalyticsView(fuelRecords: .constant(fuels))
 }
