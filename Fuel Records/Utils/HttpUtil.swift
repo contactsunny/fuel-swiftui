@@ -13,7 +13,22 @@ class HttpUtil {
     
     private let logger = Logger.init(subsystem: "com.contactsunny.fuelrecords", category: "HttpUtil")
     private let baseUrl = "https://api.fuel.contactsunny.com/"
-    private let token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1ZTA3NGYxMzg0MWRlOTdkNTNiYmIxOGYiLCJlbWFpbCI6InN1bm55LjNteXNvcmVAZ21haWwuY29tIiwiY3JlYXRlZEF0IjoiMTcyNjY1NzMyODEyMSJ9.RRBUUHNWiFrA1YNv6v4GI123lHEkS170xFQBFM08qfKdzaUwJp3mq3KMukcqhyK-nu8cIU5Aljx93Pd8gGJ55g"
+    private var token: String?
+    
+    init() {
+        if let data = UserDefaults.standard.data(forKey: "token") {
+            if let decoded = try? JSONDecoder().decode(String.self, from: data) {
+                token = decoded
+            }
+        }
+        if token == nil {
+            if let encoded = try? JSONEncoder().encode(
+                "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1ZTA3NGYxMzg0MWRlOTdkNTNiYmIxOGYiLCJlbWFpbCI6InN1bm55LjNteXNvcmVAZ21haWwuY29tIiwiY3JlYXRlZEF0IjoiMTcyNjY1NzMyODEyMSJ9.RRBUUHNWiFrA1YNv6v4GI123lHEkS170xFQBFM08qfKdzaUwJp3mq3KMukcqhyK-nu8cIU5Aljx93Pd8gGJ55g"
+            ) {
+                UserDefaults.standard.set(encoded, forKey: "token")
+            }
+        }
+    }
     
     private var session: URLSession {
         let config = URLSessionConfiguration.default
