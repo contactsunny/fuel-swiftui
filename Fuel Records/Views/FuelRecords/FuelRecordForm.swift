@@ -37,6 +37,7 @@ struct FuelRecordForm: View {
         guard amount != nil, litres != nil else { return nil }
         return (amount! / litres!)
     }
+    let preferences = LocalStorageUtil.getPreferencesFromLocalStorage()
     
     
     var body: some View {
@@ -44,7 +45,13 @@ struct FuelRecordForm: View {
             ProgressView()
                 .task {
                     vehicles = await vehicleService.getVehicles()!
-                    vehicle = vehicles.first?.id
+                    if preferences != nil {
+                        vehicle = (preferences?.defaultVehicleId)!
+                        fuelType = (preferences?.defaultFuelType)!
+                        paymentMethod = (preferences?.defaultPaymentType)!
+                    } else {
+                        vehicle = vehicles.first?.id
+                    }
                     showProgressView = false
                 }
         } else {
