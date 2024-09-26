@@ -29,35 +29,35 @@ struct FuelCostTrendAnalyticsView: View {
                                 x: .value("Date", chartData.date),
                                 y: .value("Amount", chartData.value)
                             )
-                            .symbol {
-                                Circle()
-                                    .fill(.yellow)
-                                    .frame(width: 10)
-                                    .shadow(radius: 2)
-                            }
+//                            .symbol {
+//                                Circle()
+////                                    .fill(.blue)
+//                                    .frame(width: 10)
+//                                    .shadow(radius: 2)
+//                            }
                             
-                            PointMark(
-                                x: .value("Date", chartData.date),
-                                y: .value("Amount", chartData.value)
-                            )
-                            .opacity(0)
-                            .annotation(position: .overlay,
-                                        alignment: .bottom,
-                                        spacing: 10) {
-                                Text("\(chartData.value, specifier: "%.2f")")
-                            }
+//                            PointMark(
+//                                x: .value("Date", chartData.date),
+//                                y: .value("Amount", chartData.value)
+//                            )
+//                            .opacity(0)
+//                            .annotation(position: .overlay,
+//                                        alignment: .bottom,
+//                                        spacing: 10) {
+//                                Text("\(chartData.value, specifier: "%.2f")")
+//                            }
                         }
                     }
-                    .chartOverlay { proxy in
-                        GeometryReader { geometry in
-                            ZStack(alignment: .top) {
-                                Rectangle().fill(.clear).contentShape(Rectangle())
-//                                    .onTapGesture { location in
-//                                        updateSelectedState(at: location, proxy: proxy, geometry: geometry)
-//                                    }
-                            }
-                        }
-                    }
+//                    .chartOverlay { proxy in
+//                        GeometryReader { geometry in
+//                            ZStack(alignment: .top) {
+//                                Rectangle().fill(.clear).contentShape(Rectangle())
+////                                    .onTapGesture { location in
+////                                        updateSelectedState(at: location, proxy: proxy, geometry: geometry)
+////                                    }
+//                            }
+//                        }
+//                    }
                     .padding()
             } else {
                 VStack {
