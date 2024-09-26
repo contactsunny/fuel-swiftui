@@ -29,6 +29,7 @@ struct FuelCostTrendAnalyticsView: View {
                                 x: .value("Date", chartData.date),
                                 y: .value("Amount", chartData.value)
                             )
+                            .foregroundStyle(by: .value("Fuel Type", chartData.series))
 //                            .symbol {
 //                                Circle()
 ////                                    .fill(.blue)
@@ -48,16 +49,6 @@ struct FuelCostTrendAnalyticsView: View {
 //                            }
                         }
                     }
-//                    .chartOverlay { proxy in
-//                        GeometryReader { geometry in
-//                            ZStack(alignment: .top) {
-//                                Rectangle().fill(.clear).contentShape(Rectangle())
-////                                    .onTapGesture { location in
-////                                        updateSelectedState(at: location, proxy: proxy, geometry: geometry)
-////                                    }
-//                            }
-//                        }
-//                    }
                     .padding()
             } else {
                 VStack {
@@ -81,13 +72,9 @@ struct FuelCostTrendAnalyticsView: View {
     }
     
     func createChartData() {
-        var count = 0
         let calendar = Calendar.autoupdatingCurrent
         
         for record in fuelRecords {
-            if count >= 10 {
-                break
-            }
             let date = Date(timeIntervalSince1970: record.date / 1000)
             let calendarDate = Calendar.current.dateComponents([.day, .year, .month], from: date)
             
@@ -95,11 +82,10 @@ struct FuelCostTrendAnalyticsView: View {
                 id: record.id,
                 date: calendar.date(from: DateComponents(year: calendarDate.year, month: calendarDate.month, day: calendarDate.day))!,
                 value: record.costPerLitre,
-                timestamp: record.date
+                timestamp: record.date,
+                series: CustomUtil.getFormattedString(str: record.fuelType)
             )
-            print("\(chartData.value)")
             chartDataList.append(chartData)
-            count += 1
         }
     }
 }
@@ -110,12 +96,14 @@ class LineChartData {
     let date: Date
     var value: Double
     var timestamp: Double
+    var series: String
     
-    internal init(id: String, date: Date, value: Double, timestamp: Double) {
+    internal init(id: String, date: Date, value: Double, timestamp: Double, series: String) {
         self.id = id
         self.date = date
         self.value = value
         self.timestamp = timestamp
+        self.series = series
     }
 }
 

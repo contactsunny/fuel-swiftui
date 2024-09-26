@@ -1,14 +1,14 @@
 //
-//  CostByVehicleCategoryanalyticsView.swift
+//  SpendPerMonthAnalyticsView.swift
 //  Fuel Records
 //
-//  Created by Sunny Srinidhi on 24/09/24.
+//  Created by Sunny Srinidhi on 26/09/24.
 //
 
 import SwiftUI
 import Charts
 
-struct SpendByVehicleCategoryAnalyticsView: View {
+struct SpendPerMonthAnalyticsView: View {
     
     @Binding var fuelRecords: [Fuel]
     @State var chartDataList: [ChartData] = []
@@ -25,17 +25,13 @@ struct SpendByVehicleCategoryAnalyticsView: View {
                 VStack {
                     Chart {
                         ForEach(chartDataList, id: \.id) { data in
-                            SectorMark(
-                                angle: .value("Sum", data.value)
+                            BarMark(
+                                x: .value("Date", data.name),
+                                y: .value("Amount", data.value)
                             )
-                            .foregroundStyle(by: .value("Type", data.name))
-                            .annotation(position: .overlay) {
-                                Text("\(data.value, specifier: "%.2f")")
-                                    .font(.headline)
-                                    .foregroundStyle(.white)
-                            }
                         }
                     }
+                    .padding()
                 }
             } else {
                 VStack {
@@ -52,38 +48,40 @@ struct SpendByVehicleCategoryAnalyticsView: View {
                 }
             }
         }
-        .navigationTitle("Spend By Vehicle Category")
+        .navigationTitle("Spend By Fuel Type")
         .task {
             createChartData()
         }
     }
     
     func createChartData() {
+        let dtf = DateFormatter()
+        dtf.timeZone = TimeZone.current
+        dtf.dateFormat = "MMM yyyy"
+        
         for record in fuelRecords {
-            var chartData: ChartData
-            
-            if !chartDataList.contains(where: { $0.id == record.vehicleCategoryId }) {
-                chartData = ChartData(
-                    id: record.vehicleCategoryId!, name: record.vehicle!.vehicleCategory!.name,
-                    value: record.amount
-                )
-                chartDataList.append(chartData)
+            let date = Date(timeIntervalSince1970: record.date / 1000)
+            let calendarDate = Calendar.current.dateComponents([.day, .year, .month], from: date)
+            let id = "\(calendarDate.month!)\(calendarDate.year!)"
+            let name = dtf.string(from: date)
+            let value = record.amount
+            var data: ChartData? = getChartDataById(id: id)
+            if data == nil {
+                data = ChartData(id: id, name: name, value: value)
+                chartDataList.append(data!)
             } else {
-                chartData = getChartDataByVehicleCategory(category: record.vehicle!.vehicleCategory!)
-                chartData.value += record.amount
+                data!.value += value
             }
         }
-        
-        chartDataList = chartDataList.sorted { $0.value > $1.value }
     }
     
-    func getChartDataByVehicleCategory(category: VehicleCategory) -> ChartData {
+    func getChartDataById(id: String) -> ChartData? {
         for data in chartDataList {
-            if data.id == category.id {
+            if data.id == id {
                 return data
             }
         }
-        return ChartData(id: category.id, name: category.name, value: 0.0)
+        return nil
     }
 }
 
@@ -91,7 +89,7 @@ struct SpendByVehicleCategoryAnalyticsView: View {
     let fuel1 = Fuel(
         id: "someID",
         userId: "someId",
-        date: 1719923258,
+        date: 1719923258000,
         vehicleId: "someId",
         litres: 23.45,
         amount: 1234.56,
@@ -115,7 +113,7 @@ struct SpendByVehicleCategoryAnalyticsView: View {
     let fuel2 = Fuel(
         id: "someID1",
         userId: "someId",
-        date: 1719923258,
+        date: 1719923258000,
         vehicleId: "someId1",
         litres: 23.45,
         amount: 1234.56,
@@ -138,5 +136,5 @@ struct SpendByVehicleCategoryAnalyticsView: View {
     
     let fuels: [Fuel] = [fuel1, fuel2]
     
-    SpendByVehicleCategoryAnalyticsView(fuelRecords: .constant(fuels))
+    SpendPerMonthAnalyticsView(fuelRecords: .constant(fuels))
 }

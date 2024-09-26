@@ -114,7 +114,7 @@ struct FuelRecordsView: View {
                                 Button {
                                     showFilterSection.toggle()
                                 } label: {
-                                    Image(systemName: "magnifyingglass")
+                                    Image(systemName: "line.3.horizontal.decrease.circle")
                                 }
                             }
                             
@@ -164,7 +164,6 @@ struct FuelRecordsView: View {
                     ).navigationTitle("Filter Fuel Logs")
                 }.onDisappear() {
                     Task {
-                        print("On Disappear")
                         await refreshList()
                     }
                 }
@@ -186,7 +185,6 @@ struct FuelRecordsView: View {
             }
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
                 orientation = UIDevice.current.orientation
-                print("Orientation changed: \(orientation)")
             }
             .environment(\.horizontalSizeClass, orientation == .portrait ? .compact : .regular)
         }
@@ -258,7 +256,6 @@ struct FuelRecordsView: View {
         Task {
             for index in self.deleteIndexSet {
                 let fuel = fuelRecords[index]
-                print("Deleteing \(fuel.id) \(fuel.amount)")
                 await fuelService.deleteFuelRecord(id: fuel.id)
                 await refreshList()
             }

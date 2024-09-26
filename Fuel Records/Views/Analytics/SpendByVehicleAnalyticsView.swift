@@ -37,6 +37,24 @@ struct SpendByVehicleAnalyticsView: View {
                         }
                     }
                 }
+//                .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
+//                    .onEnded({ value in
+//                        if value.translation.width < 0 {
+//                            // left
+//                            viewToShow = "list"
+//                        }
+//                        
+//                        if value.translation.width > 0 {
+//                            // right
+//                        }
+//                        if value.translation.height < 0 {
+//                            // up
+//                        }
+//                        
+//                        if value.translation.height > 0 {
+//                            // down
+//                        }
+//                    }))
             } else {
                 VStack {
                     List {
