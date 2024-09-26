@@ -30,7 +30,7 @@ struct FuelRecordForm: View {
     @State var amount: Double?
     @State var litres: Double?
     @State var fuelType = "PETROL"
-    @State var paymentMethod = "CREDIT_CARD"
+    @State var paymentType = "CREDIT_CARD"
     @State private var date = Date.now
     @State var vehicle: String?
     var costPerLitre: Double? {
@@ -48,7 +48,7 @@ struct FuelRecordForm: View {
                     if preferences != nil {
                         vehicle = (preferences?.defaultVehicleId)!
                         fuelType = (preferences?.defaultFuelType)!
-                        paymentMethod = (preferences?.defaultPaymentType)!
+                        paymentType = (preferences?.defaultPaymentType)!
                     } else {
                         vehicle = vehicles.first?.id
                     }
@@ -88,7 +88,7 @@ struct FuelRecordForm: View {
                             }.pickerStyle(SegmentedPickerStyle())
                         }
                         Section {
-                            Picker("Payment Type", selection: $paymentMethod) {
+                            Picker("Payment Type", selection: $paymentType) {
                                 Text("UPI").tag("UPI")
                                 Text("Cash").tag("CASH")
                                 Text("Credit Card").tag("CREDIT_CARD")
@@ -157,7 +157,7 @@ struct FuelRecordForm: View {
             fuelType: fuelType,
             litres: litres!,
             costPerLitre: costPerLitre!,
-            paymentType: paymentMethod,
+            paymentType: paymentType,
             amount: amount!,
             vehicleId: vehicle!
         )
