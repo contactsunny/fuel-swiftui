@@ -85,7 +85,9 @@ struct FuelRecordForm: View {
                             Picker("Fuel Type", selection: $fuelType) {
                                 Text("Petrol").tag("PETROL")
                                 Text("Diesel").tag("DIESEL")
-                            }.pickerStyle(SegmentedPickerStyle())
+                                Text("CNG").tag("CNG")
+                                Text("EV").tag("EV")
+                            }
                         }
                         Section {
                             Picker("Payment Type", selection: $paymentType) {
