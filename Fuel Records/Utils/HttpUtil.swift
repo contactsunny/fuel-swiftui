@@ -14,6 +14,7 @@ class HttpUtil {
     private let logger = Logger.init(subsystem: "com.contactsunny.fuelrecords", category: "HttpUtil")
     private let baseUrl = "https://api.fuel.contactsunny.com/"
     private var token: String?
+    private var tempToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1ZTA3NGYxMzg0MWRlOTdkNTNiYmIxOGYiLCJlbWFpbCI6InN1bm55LjNteXNvcmVAZ21haWwuY29tIiwiY3JlYXRlZEF0IjoiMTc1MDMwMjIwNTkyNCJ9.3ps4BuqybROoO82_8CWb8ws7xOmIY7CpIQWTpS70CYIH_SdLHOXeVQ9WExG5I0_3kL1cq75IjQu9N2grOYwgmw"
     
     init() {
         if let data = UserDefaults.standard.data(forKey: "token") {
@@ -21,10 +22,22 @@ class HttpUtil {
                 token = decoded
             }
         }
+        
+        if token != nil {
+            UserDefaults.standard.removeObject(forKey: "token")
+            do {
+                let encoded = try JSONEncoder().encode(tempToken)
+                UserDefaults.standard.set(encoded, forKey: "token")
+            } catch let error {
+                print("----------------")
+                print(error)
+                print("Unable to write to local storage")
+                print("----------------")
+            }
+        }
+        
         if token == nil {
-            if let encoded = try? JSONEncoder().encode(
-                "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1ZTA3NGYxMzg0MWRlOTdkNTNiYmIxOGYiLCJlbWFpbCI6InN1bm55LjNteXNvcmVAZ21haWwuY29tIiwiY3JlYXRlZEF0IjoiMTcyNjY1NzMyODEyMSJ9.RRBUUHNWiFrA1YNv6v4GI123lHEkS170xFQBFM08qfKdzaUwJp3mq3KMukcqhyK-nu8cIU5Aljx93Pd8gGJ55g"
-            ) {
+            if let encoded = try? JSONEncoder().encode(tempToken) {
                 UserDefaults.standard.set(encoded, forKey: "token")
             }
         }
