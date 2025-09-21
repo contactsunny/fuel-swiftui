@@ -108,7 +108,8 @@ struct EditFuelRecordForm: View {
                     fuelType = fuel.fuelType
                     date = Date(timeIntervalSince1970: fuel.date/1000)
                 })
-                .navigationTitle("Add Fuel Log")
+                .navigationTitle("Edit Fuel Log")
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         XMarkButton().onTapGesture { // on tap gesture calls dismissal

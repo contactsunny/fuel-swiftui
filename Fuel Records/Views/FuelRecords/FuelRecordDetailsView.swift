@@ -88,6 +88,7 @@ struct FuelRecordDetailsView: View {
                 }
                 .disabled(showProgressView)
                 .navigationTitle(Text("Fuel Log"))
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
@@ -124,6 +125,7 @@ struct FuelRecordDetailsView: View {
                             fuel: $fuel
                         )
                         .navigationTitle("Edit Fuel Log")
+                        .navigationBarTitleDisplayMode(.inline)
                     }
                 }
             }

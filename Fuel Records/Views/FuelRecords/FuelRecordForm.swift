@@ -106,6 +106,7 @@ struct FuelRecordForm: View {
                 }
                 .disabled(showApiCallProgressView)
                 .navigationTitle("Add Fuel Log")
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         XMarkButton().onTapGesture { // on tap gesture calls dismissal

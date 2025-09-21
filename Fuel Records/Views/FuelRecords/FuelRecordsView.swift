@@ -65,6 +65,7 @@ struct FuelRecordsView: View {
                             })
                         }
                         .navigationTitle(Text("Fuel Logs"))
+                        .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
                             ToolbarItem(placement: .navigationBarLeading) {
                                 EditButton()
@@ -105,6 +106,7 @@ struct FuelRecordsView: View {
                             })
                         }
                         .navigationTitle(Text("Fuel Logs"))
+                        .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
                             ToolbarItem(placement: .navigationBarLeading) {
                                 EditButton()
@@ -146,6 +148,7 @@ struct FuelRecordsView: View {
                 NavigationStack {
                     FuelRecordForm(shouldRefreshList: $shouldRefreshList)
                         .navigationTitle("Add Fuel Log")
+                        .navigationBarTitleDisplayMode(.inline)
                 }
             }
             .sheet(isPresented: $showFilterSection,
@@ -161,7 +164,9 @@ struct FuelRecordsView: View {
                         fuelTypes: $fuelTypes,
                         paymentMethods: $paymentMethods,
                         criteria: $filterCriteria
-                    ).navigationTitle("Filter Fuel Logs")
+                    )
+                    .navigationTitle("Filter Fuel Logs")
+                    .navigationBarTitleDisplayMode(.inline)
                 }.onDisappear() {
                     Task {
                         await refreshList()
